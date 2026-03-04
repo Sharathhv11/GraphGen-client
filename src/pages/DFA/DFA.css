@@ -1,0 +1,392 @@
+.dfa-page {
+  height: calc(100dvh - var(--nav-height));
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.dfa-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Base Pane Styles */
+.dfa-input-pane, .dfa-output-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  overflow-y: auto;
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.dfa-input-pane::-webkit-scrollbar,
+.dfa-output-pane::-webkit-scrollbar {
+  display: none;
+}
+
+.dfa-input-pane {
+  border-right: 1px solid var(--border);
+  background: var(--bg-secondary);
+  backdrop-filter: blur(10px);
+  max-width: 500px;
+}
+
+.dfa-output-pane {
+  background: var(--bg-primary);
+}
+
+.pane-header {
+  margin-bottom: 2rem;
+}
+
+.pane-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.pane-header p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Form Elements */
+.input-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group.flex-grow {
+  flex: 1;
+}
+
+.input-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.label-with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.demo-link {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: var(--transition);
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+}
+
+.demo-link:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border);
+}
+
+.dfa-input, .dfa-select, .dfa-textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.dfa-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.dfa-textarea {
+  flex: 1;
+  resize: none;
+  font-family: inherit;
+  line-height: 1.5;
+  min-height: 200px;
+}
+
+.dfa-input:focus, .dfa-select:focus, .dfa-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.dfa-input::placeholder, .dfa-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Error State */
+.error-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(225, 29, 72, 0.1);
+  border: 1px solid rgba(225, 29, 72, 0.3);
+  border-radius: var(--radius-sm);
+  color: #fb7185;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.error-message svg {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+/* Actions */
+.btn-generate {
+  width: 100%;
+  padding: 1rem;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: var(--transition);
+  margin-top: auto;
+}
+
+.btn-generate:hover:not(:disabled) {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+.btn-generate:disabled {
+  background: var(--border);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.btn-download {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-download:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--text-secondary);
+}
+
+/* Output Area */
+.viz-render-area {
+  flex: 1;
+  background-color: #f8fafc; /* Very light cool grey/white */
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+  background-size: 20px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  min-height: 400px;
+}
+
+.viz-container {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: transparent;
+}
+
+/* Force the graphviz-react inner div to take up space */
+.viz-container > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viz-container svg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Empty & Loading States */
+.empty-state, .loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #444444; /* Constant dark grey */
+  padding: 3rem;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #000000; /* Constant black */
+  margin-bottom: 0.5rem;
+}
+
+.empty-state span {
+  font-size: 0.9rem;
+  max-width: 300px;
+}
+
+.loading-state p {
+  margin-top: 1.5rem;
+  font-weight: 500;
+  color: #000000; /* Constant black */
+}
+
+.loading-subtext {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #666666; /* Constant muted grey */
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+.spinner-large {
+  width: 48px;
+  height: 48px;
+  color: #000000; /* Constant black */
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive constraints for split pane */
+@media (max-width: 1024px) {
+  .dfa-input-pane {
+    max-width: 400px;
+    padding: 1.5rem;
+  }
+  
+  .dfa-output-pane {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .dfa-page {
+    /* Allow regular page scrolling on mobile/tablet instead of locked inner panes */
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .dfa-container {
+    flex-direction: column-reverse;
+    overflow: visible; /* Let whole container scroll in parent */
+  }
+  
+  .dfa-input-pane, .dfa-output-pane {
+    flex: none;
+    overflow-y: visible;
+  }
+
+  .dfa-input-pane {
+    max-width: 100%;
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .dfa-textarea {
+    min-height: 150px;
+  }
+  
+  .dfa-output-pane {
+    min-height: 60vh; /* Take up a good portion of screen size */
+  }
+}
+
+@media (max-width: 600px) {
+  .dfa-input-pane, .dfa-output-pane {
+    padding: 1.25rem;
+  }
+
+  .pane-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .pane-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .btn-generate {
+    padding: 0.875rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dfa-input-pane, .dfa-output-pane {
+    padding: 1rem;
+  }
+}
