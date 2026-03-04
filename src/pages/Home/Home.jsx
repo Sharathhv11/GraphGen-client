@@ -29,14 +29,16 @@ export default function Home() {
               className="nav-logo" 
             />
           </div>
-          
-          <div className="nav-right">
+
+          <div className="nav-center">
             <div className="nav-links">
               <button className="nav-link" onClick={() => scrollToSection('about')} style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}>About</button>
               <button className="nav-link" onClick={() => scrollToSection('features')} style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}>Features</button>
               <button className="nav-link" onClick={() => scrollToSection('contact')} style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}>Contact</button>
             </div>
-            
+          </div>
+          
+          <div className="nav-right">
             <a 
               href="https://github.com/Sharathhv11/MINI-Project-Back-end.git" 
               target="_blank" 
@@ -77,6 +79,26 @@ export default function Home() {
               <a href="#features" className="btn-secondary" onClick={(e) => { e.preventDefault(); scrollToSection('features'); }}>
                 See how it works
               </a>
+              
+              <div className="hero-mobile-actions">
+                <a 
+                  href="https://github.com/Sharathhv11/MINI-Project-Back-end.git" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="github-link"
+                  title="View Source on GitHub"
+                >
+                  <Github size={20} />
+                </a>
+
+                <button 
+                  className="theme-toggle" 
+                  onClick={toggleTheme} 
+                  title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                >
+                  {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                </button>
+              </div>
             </div>
           </section>
 
