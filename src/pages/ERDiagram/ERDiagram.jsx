@@ -6,12 +6,7 @@ import api from '../../utils/api';
 import { Graphviz } from 'graphviz-react';
 import './ERDiagram.css';
 
-const EXAMPLE_PROMPTS = [
-  'Design an ER diagram for a University system with Students, Courses, and Professors.',
-  'Design an ER diagram for an E-commerce platform with Products, Customers, and Orders.',
-  'Design an ER diagram for a Hospital system with Patients, Doctors, and Appointments.',
-  'Design an ER diagram for a Library system with Books, Members, and Loans.',
-];
+
 
 export default function ERDiagram() {
   useTitle('ER Diagram Generator');
@@ -85,10 +80,6 @@ export default function ERDiagram() {
     URL.revokeObjectURL(url);
   };
 
-  const handleExampleClick = (prompt) => {
-    setDescription(prompt);
-    setError(null);
-  };
 
   return (
     <div className="er-page">
@@ -135,22 +126,7 @@ export default function ERDiagram() {
             />
           </div>
 
-          {/* Quick-fill example prompts */}
-          <div className="er-examples">
-            <span className="er-examples-label">Try an example:</span>
-            <div className="er-examples-list">
-              {EXAMPLE_PROMPTS.map((prompt, idx) => (
-                <button
-                  key={idx}
-                  className="er-example-chip"
-                  onClick={() => handleExampleClick(prompt)}
-                  title={prompt}
-                >
-                  {prompt.length > 55 ? prompt.slice(0, 55) + '…' : prompt}
-                </button>
-              ))}
-            </div>
-          </div>
+
 
           {error && (
             <div className="er-error-message">

@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Play, Download, Loader2, AlertCircle, Info, Workflow,
-  MessageSquare, Code2, ChevronDown,
+  MessageSquare, Code2,
 } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import { Graphviz } from 'graphviz-react';
+import Editor from '@monaco-editor/react';
 import './Flowchart.css';
 
 /* ── Prompt-mode examples ─────────────────────────────────── */
@@ -43,9 +44,9 @@ const CODE_EXAMPLES = {
 };
 
 const LANGUAGES = [
-  { id: 'java',       label: 'Java',       icon: '☕' },
-  { id: 'python',     label: 'Python',     icon: '🐍' },
-  { id: 'javascript', label: 'JavaScript', icon: '⚡' },
+  { id: 'java',       label: 'Java' },
+  { id: 'python',     label: 'Python' },
+  { id: 'javascript', label: 'JavaScript' },
 ];
 
 export default function Flowchart() {
@@ -65,8 +66,7 @@ export default function Flowchart() {
 
   /* ── code-mode state ── */
   const [language, setLanguage]       = useState('python');
-  const [code, setCode]               = useState('');
-  const [langDropOpen, setLangDropOpen] = useState(false);
+  const [code, setCode]               = useState(CODE_EXAMPLES.python);
 
   /* ─────────────────────────────────── */
   const handleGenerate = async () => {
@@ -193,90 +193,49 @@ export default function Flowchart() {
                 />
               </div>
 
-              {/* Example chips */}
-              <div className="fc-examples">
-                <span className="fc-examples-label">Try an example:</span>
-                <div className="fc-examples-list">
-                  {EXAMPLE_PROMPTS.map((p, i) => (
-                    <button
-                      key={i}
-                      className="fc-example-chip"
-                      onClick={() => { setDescription(p); setError(null); }}
-                      title={p}
-                    >
-                      {p.length > 52 ? p.slice(0, 52) + '…' : p}
-                    </button>
-                  ))}
-                </div>
-              </div>
+
             </>
           )}
 
           {/* ── CODE MODE ── */}
           {mode === 'code' && (
             <>
-              {/* Language Selector */}
-              <div className="fc-input-group">
-                <label>Programming Language</label>
-                <div className="fc-lang-dropdown-wrap">
-                  <button
-                    className="fc-lang-dropdown-btn"
-                    onClick={() => setLangDropOpen(o => !o)}
+              {/* Code Editor */}
+              <div className="fc-input-group fc-flex-grow" style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
+                  <label style={{ marginBottom: 0 }}>Paste your {selectedLang.label} code</label>
+                  <select 
+                    value={language} 
+                    onChange={e => setLanguage(e.target.value)}
+                    className="fc-input"
+                    style={{ width: 'auto', padding: '0.3rem 0.6rem', fontSize: '0.85rem' }}
                   >
-                    <span>{selectedLang.icon} {selectedLang.label}</span>
-                    <ChevronDown size={15} className={`fc-chevron ${langDropOpen ? 'fc-chevron-open' : ''}`} />
-                  </button>
-                  {langDropOpen && (
-                    <div className="fc-lang-dropdown-menu">
-                      {LANGUAGES.map(lang => (
-                        <button
-                          key={lang.id}
-                          className={`fc-lang-option ${language === lang.id ? 'fc-lang-selected' : ''}`}
-                          onClick={() => { setLanguage(lang.id); setLangDropOpen(false); }}
-                        >
-                          <span>{lang.icon}</span>
-                          <span>{lang.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                    {LANGUAGES.map(lang => (
+                      <option key={lang.id} value={lang.id}>{lang.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex: 1, border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden', minHeight: '200px', backgroundColor: '#1e1e1e' }}>
+                  <Editor
+                    height="100%"
+                    language={language}
+                    theme="vs-dark"
+                    value={code}
+                    onChange={(value) => setCode(value || '')}
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 13,
+                      lineHeight: 22,
+                      fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace",
+                      scrollBeyondLastLine: false,
+                      wordWrap: 'on',
+                      padding: { top: 12, bottom: 12 }
+                    }}
+                  />
                 </div>
               </div>
 
-              {/* Code textarea */}
-              <div className="fc-input-group fc-flex-grow">
-                <label htmlFor="fcCode">Paste your {selectedLang.label} code</label>
-                <textarea
-                  id="fcCode"
-                  value={code}
-                  onChange={e => setCode(e.target.value)}
-                  placeholder={`// Paste your ${selectedLang.label} code here...\n${CODE_EXAMPLES[language]}`}
-                  className="fc-textarea fc-code-textarea"
-                  spellCheck={false}
-                />
-              </div>
 
-              {/* Quick-fill code examples */}
-              <div className="fc-examples">
-                <span className="fc-examples-label">Load an example:</span>
-                <div className="fc-examples-list">
-                  {Object.entries(CODE_EXAMPLES).map(([lang, snippet]) => (
-                    <button
-                      key={lang}
-                      className="fc-example-chip"
-                      onClick={() => {
-                        setLanguage(lang);
-                        setCode(snippet);
-                        setError(null);
-                      }}
-                    >
-                      {lang === 'java' ? '☕ Factorial (Java)' :
-                       lang === 'python' ? '🐍 Bubble Sort (Python)' :
-                       '⚡ Binary Search (JS)'}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </>
           )}
 

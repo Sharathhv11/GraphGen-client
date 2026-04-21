@@ -228,7 +228,7 @@
   width: 100%;
   padding: 1rem;
   background: linear-gradient(135deg, #14b8a6, #2dd4bf);
-  color: #021a17;
+  color: white;
   border: none;
   border-radius: var(--radius-sm);
   font-size: 1rem;
