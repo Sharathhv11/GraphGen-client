@@ -1,4 +1,9 @@
-.dfa-page {
+/* ═══════════════════════════════════════════════════
+   ER Diagram Page — Split-Pane Layout
+   (Modeled after DFA, with ER-specific theming)
+   ═══════════════════════════════════════════════════ */
+
+.er-page {
   height: calc(100dvh - var(--nav-height));
   display: flex;
   flex-direction: column;
@@ -7,96 +12,106 @@
   overflow: hidden;
 }
 
-.dfa-container {
+.er-container {
   display: flex;
   flex: 1;
   overflow: hidden;
   position: relative;
   z-index: 1;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
-/* Base Pane Styles */
-.dfa-input-pane, .dfa-output-pane {
+/* ── Base Pane Styles ── */
+.er-input-pane,
+.er-output-pane {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 2rem;
   overflow-y: auto;
-  /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.dfa-input-pane::-webkit-scrollbar,
-.dfa-output-pane::-webkit-scrollbar {
+.er-input-pane::-webkit-scrollbar,
+.er-output-pane::-webkit-scrollbar {
   display: none;
 }
 
-.dfa-input-pane {
+.er-input-pane {
   border-right: 1px solid var(--border);
   background: var(--bg-secondary);
   backdrop-filter: blur(10px);
   max-width: 500px;
 }
 
-.dfa-output-pane {
+.er-output-pane {
   background: var(--bg-primary);
 }
 
-.pane-header {
-  margin-bottom: 2rem;
+/* ── Header ── */
+.er-pane-header {
+  margin-bottom: 1.75rem;
 }
 
-.pane-header h2 {
+.er-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.er-title-icon {
+  color: #2dd4bf; /* teal accent */
+}
+
+.er-pane-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
 }
 
-.pane-header p {
+.er-pane-header p {
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
-.output-header {
+.er-output-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
 }
 
-/* Form Elements */
-.input-group {
+/* ── Form Elements ── */
+.er-input-group {
   margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.input-group.flex-grow {
+.er-input-group.er-flex-grow {
   flex: 1;
 }
 
-.input-group label {
+.er-input-group label {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-secondary);
 }
 
-.label-with-action {
+.er-label-with-action {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.demo-link {
+.er-demo-link {
   font-size: 0.8rem;
   color: var(--text-muted);
   text-decoration: none;
@@ -110,13 +125,14 @@
   border: 1px solid transparent;
 }
 
-.demo-link:hover {
+.er-demo-link:hover {
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--border);
 }
 
-.dfa-input, .dfa-select, .dfa-textarea {
+.er-input,
+.er-textarea {
   width: 100%;
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -127,35 +143,68 @@
   transition: var(--transition);
 }
 
-.dfa-select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
-}
-
-.dfa-textarea {
+.er-textarea {
   flex: 1;
   resize: none;
   font-family: inherit;
   line-height: 1.5;
-  min-height: 200px;
+  min-height: 160px;
 }
 
-.dfa-input:focus, .dfa-select:focus, .dfa-textarea:focus {
+.er-input:focus,
+.er-textarea:focus {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
 }
 
-.dfa-input::placeholder, .dfa-textarea::placeholder {
+.er-input::placeholder,
+.er-textarea::placeholder {
   color: var(--text-muted);
 }
 
-/* Error State */
-.error-message {
+/* ── Example Prompt Chips ── */
+.er-examples {
+  margin-bottom: 1.25rem;
+}
+
+.er-examples-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.er-examples-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.er-example-chip {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+
+.er-example-chip:hover {
+  border-color: #2dd4bf;
+  color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.08);
+}
+
+/* ── Error State ── */
+.er-error-message {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
@@ -164,22 +213,22 @@
   border: 1px solid rgba(225, 29, 72, 0.3);
   border-radius: var(--radius-sm);
   color: #fb7185;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
-.error-message svg {
+.er-error-message svg {
   flex-shrink: 0;
   margin-top: 0.1rem;
 }
 
-/* Actions */
-.btn-generate {
+/* ── Generate Button ── */
+.er-btn-generate {
   width: 100%;
   padding: 1rem;
-  background: var(--text-primary);
-  color: var(--bg-primary);
+  background: linear-gradient(135deg, #14b8a6, #2dd4bf);
+  color: #021a17;
   border: none;
   border-radius: var(--radius-sm);
   font-size: 1rem;
@@ -193,20 +242,21 @@
   margin-top: auto;
 }
 
-.btn-generate:hover:not(:disabled) {
-  background: #e0e0e0;
+.er-btn-generate:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0d9488, #14b8a6);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 18px rgba(45, 212, 191, 0.3);
 }
 
-.btn-generate:disabled {
+.er-btn-generate:disabled {
   background: var(--border);
   color: var(--text-secondary);
   cursor: not-allowed;
   opacity: 0.8;
 }
 
-.btn-download {
+/* ── Download Button ── */
+.er-btn-download {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -221,15 +271,15 @@
   transition: var(--transition);
 }
 
-.btn-download:hover {
+.er-btn-download:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--text-secondary);
 }
 
-/* Output Area */
-.viz-render-area {
+/* ── Output / Viz Area ── */
+.er-viz-render-area {
   flex: 1;
-  background-color: #f8fafc; /* Very light cool grey/white */
+  background-color: #f8fafc;
   background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
   background-size: 20px 20px;
   border: 1px solid var(--border);
@@ -243,7 +293,7 @@
   min-height: 400px;
 }
 
-.viz-container {
+.er-viz-container {
   width: 100%;
   height: 100%;
   flex: 1;
@@ -254,8 +304,7 @@
   background: transparent;
 }
 
-/* Force the graphviz-react inner div to take up space */
-.viz-container > div {
+.er-viz-container > div {
   width: 100%;
   height: 100%;
   display: flex;
@@ -263,130 +312,155 @@
   justify-content: center;
 }
 
-.viz-container svg {
+.er-viz-container svg {
   max-width: 100%;
   max-height: 100%;
   width: auto !important;
   height: auto !important;
 }
 
-/* Empty & Loading States */
-.empty-state, .loading-state {
+/* ── Empty & Loading States ── */
+.er-empty-state,
+.er-loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: #444444; /* Constant dark grey */
+  color: #444444;
   padding: 3rem;
 }
 
-.empty-state p {
+.er-empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ccfbf1, #99f6e4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  color: #0d9488;
+}
+
+.er-empty-state p {
   font-size: 1.1rem;
   font-weight: 500;
-  color: #000000; /* Constant black */
+  color: #000000;
   margin-bottom: 0.5rem;
 }
 
-.empty-state span {
+.er-empty-state span {
   font-size: 0.9rem;
-  max-width: 300px;
+  max-width: 340px;
+  line-height: 1.5;
 }
 
-.loading-state p {
+.er-loading-state p {
   margin-top: 1.5rem;
   font-weight: 500;
-  color: #000000; /* Constant black */
+  color: #000000;
 }
 
-.loading-subtext {
+.er-loading-subtext {
   margin-top: 0.5rem;
   font-size: 0.875rem;
-  color: #666666; /* Constant muted grey */
+  color: #666666;
+  max-width: 320px;
+  line-height: 1.5;
 }
 
-.spinner {
-  animation: spin 1s linear infinite;
+/* ── Spinners ── */
+.er-spinner {
+  animation: er-spin 1s linear infinite;
 }
 
-.spinner-large {
+.er-spinner-large {
   width: 48px;
   height: 48px;
-  color: #000000; /* Constant black */
-  animation: spin 1s linear infinite;
+  color: #0d9488;
+  animation: er-spin 1s linear infinite;
 }
 
-@keyframes spin {
+@keyframes er-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-/* Responsive constraints for split pane */
+/* ═══════════════════════════════════════════════════
+   Responsive Breakpoints
+   ═══════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .dfa-input-pane {
+  .er-input-pane {
     max-width: 400px;
     padding: 1.5rem;
   }
-  
-  .dfa-output-pane {
+
+  .er-output-pane {
     padding: 1.5rem;
   }
 }
 
 @media (max-width: 900px) {
-  .dfa-page {
-    /* Allow regular page scrolling on mobile/tablet instead of locked inner panes */
+  .er-page {
     height: auto;
     min-height: 100vh;
     overflow: visible;
   }
 
-  .dfa-container {
+  .er-container {
     flex-direction: column;
-    overflow: visible; /* Let whole container scroll in parent */
+    overflow: visible;
   }
-  
-  .dfa-input-pane, .dfa-output-pane {
+
+  .er-input-pane,
+  .er-output-pane {
     flex: none;
     overflow-y: visible;
   }
 
-  .dfa-input-pane {
+  .er-input-pane {
     max-width: 100%;
     border-right: none;
     border-top: 1px solid var(--border);
   }
 
-  .dfa-textarea {
+  .er-textarea {
     min-height: 150px;
   }
-  
-  .dfa-output-pane {
-    min-height: 60vh; /* Take up a good portion of screen size */
+
+  .er-output-pane {
+    min-height: 60vh;
   }
 }
 
 @media (max-width: 600px) {
-  .dfa-input-pane, .dfa-output-pane {
+  .er-input-pane,
+  .er-output-pane {
     padding: 1.25rem;
   }
 
-  .pane-header {
+  .er-pane-header {
     margin-bottom: 1.5rem;
   }
 
-  .pane-header h2 {
+  .er-pane-header h2 {
     font-size: 1.3rem;
   }
 
-  .btn-generate {
+  .er-btn-generate {
     padding: 0.875rem;
     font-size: 0.95rem;
+  }
+
+  .er-example-chip {
+    max-width: 200px;
   }
 }
 
 @media (max-width: 480px) {
-  .dfa-input-pane, .dfa-output-pane {
+  .er-input-pane,
+  .er-output-pane {
     padding: 1rem;
   }
 }

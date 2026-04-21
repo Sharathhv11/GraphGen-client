@@ -93,16 +93,16 @@ export default function UserHome() {
         <aside className={`user-sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
           <div className="sidebar-content">
             <div className="menu-group">
-              <button 
+             
+ <button 
                 className="menu-item"
-                onClick={() => navigate('/home/coming-soon')}
+                onClick={() => {}}
               >
                 <div className="menu-item-content">
                   <History size={18} />
                   <span className="menu-text">History</span>
                 </div>
               </button>
-
               <button 
                 className={`menu-item accordion-header ${isTocOpen ? 'active' : ''}`}
                 onClick={toggleToc}
@@ -115,6 +115,7 @@ export default function UserHome() {
               
               {/* Expandable Sub-menu */}
               <div className={`submenu ${isTocOpen ? 'expanded' : 'collapsed'}`}>
+                
                 <button 
                   className="submenu-item"
                   onClick={() => navigate('/home/dfa')}
@@ -123,15 +124,15 @@ export default function UserHome() {
                 </button>
                 <button 
                   className="submenu-item"
-                  onClick={() => navigate('/home/coming-soon')}
+                  onClick={() => {}}
                 >
                   <span className="submenu-text">NFA</span>
                 </button>
               </div>
               
               <button 
-                className="menu-item accordion-header"
-                onClick={() => navigate('/home/coming-soon')}
+                className={`menu-item accordion-header ${location.pathname.includes('/home/flowchart') ? 'active-submenu' : ''}`}
+                onClick={() => navigate('/home/flowchart')}
               >
                 <div className="menu-item-content">
                   <span className="menu-text">Flowchart</span>
@@ -140,7 +141,7 @@ export default function UserHome() {
               
               <button 
                 className="menu-item accordion-header"
-                onClick={() => navigate('/home/coming-soon')}
+                onClick={() => navigate('/home/er-diagram')}
               >
                 <div className="menu-item-content">
                   <span className="menu-text">ER Diagram</span>
@@ -149,12 +150,13 @@ export default function UserHome() {
               
               <button 
                 className="menu-item accordion-header"
-                onClick={() => navigate('/home/coming-soon')}
+                onClick={() => {}}
               >
                 <div className="menu-item-content">
                   <span className="menu-text">Data Structure</span>
                 </div>
               </button>
+              
             </div>
           </div>
           <div className="sidebar-footer">

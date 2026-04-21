@@ -9,7 +9,6 @@ import './DFA.css';
 export default function DFA() {
   useTitle('DFA Generator');
   const [apiKey, setApiKey] = useState('');
-  const [model, setModel] = useState('gemini-2.5-flash');
   const [description, setDescription] = useState('');
   
   const [loading, setLoading] = useState(false);
@@ -32,8 +31,7 @@ export default function DFA() {
     try {
       const response = await api.post('/api/diagram/toc/dfa', {
         query: description,
-        apiKey,
-        model
+        apiKey
       });
 
       if (response.data.status === 'success' && response.data.data.vizCode) {
@@ -106,20 +104,6 @@ export default function DFA() {
             />
           </div>
 
-          <div className="input-group">
-            <label htmlFor="model">Model Configuration</label>
-            <select 
-              id="model" 
-              value={model} 
-              onChange={(e) => setModel(e.target.value)}
-              className="dfa-select"
-            >
-              <option value="gemini-2.5-flash">gemini-2.5-flash</option>
-              <option value="gemini-3-flash">gemini-3-flash</option>
-              <option value="gemini-2.5-flash-light">gemini-2.5-flash-light</option>
-            </select>
-          </div>
-
           <div className="input-group flex-grow">
             <label htmlFor="description">Problem Description</label>
             <textarea 
@@ -153,7 +137,7 @@ export default function DFA() {
                 <Play size={18} />
                 Generate DFA
               </>
-            )}
+            )} 
           </button>
         </div>
 

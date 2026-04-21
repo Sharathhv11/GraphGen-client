@@ -5,6 +5,8 @@ import Signup from './pages/Signup/Signup';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import UserHome from './pages/UserHome/UserHome';
 import DFA from './pages/DFA/DFA';
+import ERDiagram from './pages/ERDiagram/ERDiagram';
+import Flowchart from './pages/Flowchart/Flowchart';
 import DashboardHome from './pages/UserHome/DashboardHome';
 import ComingSoon from './pages/UserHome/ComingSoon';
 import Demo from './pages/UserHome/Demo';
@@ -17,6 +19,8 @@ function App() {
         <Route path="/home" element={<UserHome />}>
           <Route index element={<DashboardHome />} />
           <Route path="dfa" element={<DFA />} />
+          <Route path="er-diagram" element={<ERDiagram />} />
+          <Route path="flowchart" element={<Flowchart />} />
           <Route path="coming-soon" element={<ComingSoon />} />
           <Route path="demo" element={<Demo />} />
         </Route>
