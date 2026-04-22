@@ -49,13 +49,23 @@
 }
 
 .pane-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
+}
+
+.dfa-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.dfa-title-icon {
+  color: #a78bfa; /* violet accent */
 }
 
 .pane-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
 }
 
@@ -194,8 +204,7 @@
 }
 
 .btn-generate:hover:not(:disabled) {
-  background: #e0e0e0;
-  transform: translateY(-2px);
+  opacity: 0.85;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
 }
 
@@ -281,6 +290,18 @@
   padding: 3rem;
 }
 
+.dfa-empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ede9fe, #c4b5fd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  color: #7c3aed;
+}
+
 .empty-state p {
   font-size: 1.1rem;
   font-weight: 500;
@@ -290,7 +311,8 @@
 
 .empty-state span {
   font-size: 0.9rem;
-  max-width: 300px;
+  max-width: 340px;
+  line-height: 1.5;
 }
 
 .loading-state p {

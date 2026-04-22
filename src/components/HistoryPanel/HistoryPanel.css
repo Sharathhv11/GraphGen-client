@@ -1,0 +1,148 @@
+/* ═══════════════════════════════════════════════════
+   History Panel — Collapsible list component
+   ═══════════════════════════════════════════════════ */
+
+.hp-wrapper {
+  margin-bottom: 1.25rem;
+}
+
+/* ── Toggle button ── */
+.hp-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.hp-toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--text-muted);
+}
+
+.hp-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.hp-badge {
+  background: var(--hp-accent, #06b6d4);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  line-height: 1.4;
+}
+
+/* ── List container ── */
+.hp-list {
+  margin-top: 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.15);
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.hp-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.hp-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* ── Individual item ── */
+.hp-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.hp-item:last-child {
+  border-bottom: none;
+}
+
+.hp-item-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 0;
+}
+
+.hp-item-main:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hp-item-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 450;
+  line-height: 1.3;
+}
+
+.hp-item-date {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.hp-item-delete {
+  padding: 0.5rem;
+  margin-right: 0.35rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.hp-item-delete:hover {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+/* ── Loading & Empty ── */
+.hp-loading,
+.hp-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.hp-spin {
+  animation: hp-spin 1s linear infinite;
+}
+
+@keyframes hp-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

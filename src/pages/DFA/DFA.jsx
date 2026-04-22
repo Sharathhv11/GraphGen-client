@@ -1,19 +1,32 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Play, Download, Loader2, AlertCircle, Info } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Play, Download, Loader2, AlertCircle, Info, CircleDot } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
+import useHistory from '../../utils/useHistory';
 import { Graphviz } from 'graphviz-react';
 import './DFA.css';
 
 export default function DFA() {
   useTitle('DFA Generator');
+  const location = useLocation();
   const [apiKey, setApiKey] = useState('');
   const [description, setDescription] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [vizCode, setVizCode] = useState('');
+
+  const { saveHistory } = useHistory('dfa');
+
+  /* ── Restore from History page navigation ── */
+  useEffect(() => {
+    if (location.state?.fromHistory) {
+      if (location.state.outputData?.vizCode) setVizCode(location.state.outputData.vizCode);
+      if (location.state.inputData?.prompt) setDescription(location.state.inputData.prompt);
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
 
   const handleGenerate = async () => {
     if (!description.trim()) {
@@ -47,6 +60,9 @@ export default function DFA() {
         }
 
         setVizCode(rawCode);
+
+        // Save to history
+        saveHistory({ prompt: description }, { vizCode: rawCode });
       } else {
         setError('Failed to generate diagram. Invalid response format.');
       }
@@ -82,7 +98,10 @@ export default function DFA() {
         {/* Left Pane - Inputs */}
         <div className="dfa-input-pane">
           <div className="pane-header">
-            <h2>DFA Configuration</h2>
+            <div className="dfa-title-row">
+              <CircleDot size={22} className="dfa-title-icon" />
+              <h2>DFA Generator</h2>
+            </div>
             <p>Describe the Deterministic Finite Automaton (DFA) you want to generate.</p>
           </div>
 
@@ -169,7 +188,9 @@ export default function DFA() {
               </div>
             ) : (
               <div className="empty-state">
-                <div className="empty-icon-placeholder"></div>
+                <div className="dfa-empty-icon">
+                  <CircleDot size={44} strokeWidth={1.2} />
+                </div>
                 <p>No diagram generated yet.</p>
                 <span>Enter your configuration and description on the left to begin.</span>
               </div>

@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════
-   ER Diagram Page — Split-Pane Layout
-   (Modeled after DFA, with ER-specific theming)
+   Data Structure Visualizer — Split-Pane Layout
+   (Cyan / Teal-blue accent theming)
    ═══════════════════════════════════════════════════ */
 
-.er-page {
+.ds-page {
   height: calc(100dvh - var(--nav-height));
   display: flex;
   flex-direction: column;
@@ -12,7 +12,7 @@
   overflow: hidden;
 }
 
-.er-container {
+.ds-container {
   display: flex;
   flex: 1;
   overflow: hidden;
@@ -25,8 +25,8 @@
 }
 
 /* ── Base Pane Styles ── */
-.er-input-pane,
-.er-output-pane {
+.ds-input-pane,
+.ds-output-pane {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -36,51 +36,51 @@
   scrollbar-width: none;
 }
 
-.er-input-pane::-webkit-scrollbar,
-.er-output-pane::-webkit-scrollbar {
+.ds-input-pane::-webkit-scrollbar,
+.ds-output-pane::-webkit-scrollbar {
   display: none;
 }
 
-.er-input-pane {
+.ds-input-pane {
   border-right: 1px solid var(--border);
   background: var(--bg-secondary);
   backdrop-filter: blur(10px);
   max-width: 500px;
 }
 
-.er-output-pane {
+.ds-output-pane {
   background: var(--bg-primary);
 }
 
 /* ── Header ── */
-.er-pane-header {
+.ds-pane-header {
   margin-bottom: 1.75rem;
 }
 
-.er-title-row {
+.ds-title-row {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   margin-bottom: 0.5rem;
 }
 
-.er-title-icon {
-  color: #2dd4bf; /* teal accent */
+.ds-title-icon {
+  color: #06b6d4; /* cyan accent */
 }
 
-.er-pane-header h2 {
+.ds-pane-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-.er-pane-header p {
+.ds-pane-header p {
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
-.er-output-header {
+.ds-output-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -88,30 +88,30 @@
 }
 
 /* ── Form Elements ── */
-.er-input-group {
+.ds-input-group {
   margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.er-input-group.er-flex-grow {
+.ds-input-group.ds-flex-grow {
   flex: 1;
 }
 
-.er-input-group label {
+.ds-input-group label {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-secondary);
 }
 
-.er-label-with-action {
+.ds-label-with-action {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.er-demo-link {
+.ds-demo-link {
   font-size: 0.8rem;
   color: var(--text-muted);
   text-decoration: none;
@@ -125,14 +125,14 @@
   border: 1px solid transparent;
 }
 
-.er-demo-link:hover {
+.ds-demo-link:hover {
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--border);
 }
 
-.er-input,
-.er-textarea {
+.ds-input,
+.ds-textarea {
   width: 100%;
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -143,7 +143,7 @@
   transition: var(--transition);
 }
 
-.er-textarea {
+.ds-textarea {
   flex: 1;
   resize: none;
   font-family: inherit;
@@ -151,24 +151,24 @@
   min-height: 160px;
 }
 
-.er-input:focus,
-.er-textarea:focus {
+.ds-input:focus,
+.ds-textarea:focus {
   outline: none;
-  border-color: #2dd4bf;
-  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
+  border-color: #06b6d4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.15);
 }
 
-.er-input::placeholder,
-.er-textarea::placeholder {
+.ds-input::placeholder,
+.ds-textarea::placeholder {
   color: var(--text-muted);
 }
 
 /* ── Example Prompt Chips ── */
-.er-examples {
+.ds-examples {
   margin-bottom: 1.25rem;
 }
 
-.er-examples-label {
+.ds-examples-label {
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-muted);
@@ -176,13 +176,13 @@
   margin-bottom: 0.5rem;
 }
 
-.er-examples-list {
+.ds-examples-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
 
-.er-example-chip {
+.ds-example-chip {
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -194,17 +194,17 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 260px;
+  max-width: 280px;
 }
 
-.er-example-chip:hover {
-  border-color: #2dd4bf;
-  color: #2dd4bf;
-  background: rgba(45, 212, 191, 0.08);
+.ds-example-chip:hover {
+  border-color: #06b6d4;
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.08);
 }
 
 /* ── Error State ── */
-.er-error-message {
+.ds-error-message {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
@@ -218,16 +218,16 @@
   line-height: 1.5;
 }
 
-.er-error-message svg {
+.ds-error-message svg {
   flex-shrink: 0;
   margin-top: 0.1rem;
 }
 
 /* ── Generate Button ── */
-.er-btn-generate {
+.ds-btn-generate {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #14b8a6, #2dd4bf);
+  background: linear-gradient(135deg, #0891b2, #06b6d4);
   color: white;
   border: none;
   border-radius: var(--radius-sm);
@@ -242,13 +242,13 @@
   margin-top: auto;
 }
 
-.er-btn-generate:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0d9488, #14b8a6);
+.ds-btn-generate:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0e7490, #0891b2);
   opacity: 0.85;
-  box-shadow: 0 4px 18px rgba(45, 212, 191, 0.3);
+  box-shadow: 0 4px 18px rgba(6, 182, 212, 0.3);
 }
 
-.er-btn-generate:disabled {
+.ds-btn-generate:disabled {
   background: var(--border);
   color: var(--text-secondary);
   cursor: not-allowed;
@@ -256,7 +256,7 @@
 }
 
 /* ── Download Button ── */
-.er-btn-download {
+.ds-btn-download {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -271,13 +271,13 @@
   transition: var(--transition);
 }
 
-.er-btn-download:hover {
+.ds-btn-download:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--text-secondary);
 }
 
 /* ── Output / Viz Area ── */
-.er-viz-render-area {
+.ds-viz-render-area {
   flex: 1;
   background-color: #f8fafc;
   background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
@@ -293,7 +293,7 @@
   min-height: 400px;
 }
 
-.er-viz-container {
+.ds-viz-container {
   width: 100%;
   height: 100%;
   flex: 1;
@@ -304,7 +304,7 @@
   background: transparent;
 }
 
-.er-viz-container > div {
+.ds-viz-container > div {
   width: 100%;
   height: 100%;
   display: flex;
@@ -312,7 +312,7 @@
   justify-content: center;
 }
 
-.er-viz-container svg {
+.ds-viz-container svg {
   max-width: 100%;
   max-height: 100%;
   width: auto !important;
@@ -320,8 +320,8 @@
 }
 
 /* ── Empty & Loading States ── */
-.er-empty-state,
-.er-loading-state {
+.ds-empty-state,
+.ds-loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -331,38 +331,38 @@
   padding: 3rem;
 }
 
-.er-empty-icon {
+.ds-empty-icon {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ccfbf1, #99f6e4);
+  background: linear-gradient(135deg, #cffafe, #67e8f9);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.25rem;
-  color: #0d9488;
+  color: #0e7490;
 }
 
-.er-empty-state p {
+.ds-empty-state p {
   font-size: 1.1rem;
   font-weight: 500;
   color: #000000;
   margin-bottom: 0.5rem;
 }
 
-.er-empty-state span {
+.ds-empty-state span {
   font-size: 0.9rem;
   max-width: 340px;
   line-height: 1.5;
 }
 
-.er-loading-state p {
+.ds-loading-state p {
   margin-top: 1.5rem;
   font-weight: 500;
   color: #000000;
 }
 
-.er-loading-subtext {
+.ds-loading-subtext {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #666666;
@@ -371,18 +371,18 @@
 }
 
 /* ── Spinners ── */
-.er-spinner {
-  animation: er-spin 1s linear infinite;
+.ds-spinner {
+  animation: ds-spin 1s linear infinite;
 }
 
-.er-spinner-large {
+.ds-spinner-large {
   width: 48px;
   height: 48px;
-  color: #0d9488;
-  animation: er-spin 1s linear infinite;
+  color: #0e7490;
+  animation: ds-spin 1s linear infinite;
 }
 
-@keyframes er-spin {
+@keyframes ds-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
@@ -391,76 +391,76 @@
    Responsive Breakpoints
    ═══════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .er-input-pane {
+  .ds-input-pane {
     max-width: 400px;
     padding: 1.5rem;
   }
 
-  .er-output-pane {
+  .ds-output-pane {
     padding: 1.5rem;
   }
 }
 
 @media (max-width: 900px) {
-  .er-page {
+  .ds-page {
     height: auto;
     min-height: 100vh;
     overflow: visible;
   }
 
-  .er-container {
+  .ds-container {
     flex-direction: column;
     overflow: visible;
   }
 
-  .er-input-pane,
-  .er-output-pane {
+  .ds-input-pane,
+  .ds-output-pane {
     flex: none;
     overflow-y: visible;
   }
 
-  .er-input-pane {
+  .ds-input-pane {
     max-width: 100%;
     border-right: none;
     border-top: 1px solid var(--border);
   }
 
-  .er-textarea {
+  .ds-textarea {
     min-height: 150px;
   }
 
-  .er-output-pane {
+  .ds-output-pane {
     min-height: 60vh;
   }
 }
 
 @media (max-width: 600px) {
-  .er-input-pane,
-  .er-output-pane {
+  .ds-input-pane,
+  .ds-output-pane {
     padding: 1.25rem;
   }
 
-  .er-pane-header {
+  .ds-pane-header {
     margin-bottom: 1.5rem;
   }
 
-  .er-pane-header h2 {
+  .ds-pane-header h2 {
     font-size: 1.3rem;
   }
 
-  .er-btn-generate {
+  .ds-btn-generate {
     padding: 0.875rem;
     font-size: 0.95rem;
   }
 
-  .er-example-chip {
+  .ds-example-chip {
     max-width: 200px;
   }
 }
 
 @media (max-width: 480px) {
-  .er-input-pane,
-  .er-output-pane {
+  .ds-input-pane,
+  .ds-output-pane {
     padding: 1rem;
   }
 }

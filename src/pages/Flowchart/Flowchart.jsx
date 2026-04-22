@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Play, Download, Loader2, AlertCircle, Info, Workflow,
   MessageSquare, Code2,
 } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
+import useHistory from '../../utils/useHistory';
 import { Graphviz } from 'graphviz-react';
 import Editor from '@monaco-editor/react';
 import './Flowchart.css';
@@ -51,12 +52,16 @@ const LANGUAGES = [
 
 export default function Flowchart() {
   useTitle('Flowchart Generator');
+  const location = useLocation();
 
   /* ── shared ── */
   const [apiKey, setApiKey]   = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [vizCode, setVizCode] = useState('');
+
+  /* ── history (save only) ── */
+  const { saveHistory } = useHistory('flowchart');
 
   /* ── mode: 'prompt' | 'code' ── */
   const [mode, setMode] = useState('prompt');
@@ -98,6 +103,10 @@ export default function Flowchart() {
         const graphMatch = rawCode.match(/(?:strict\s+)?(?:di)?graph\s+[^{]*\{[\s\S]*\}/i);
         if (graphMatch) rawCode = graphMatch[0];
         setVizCode(rawCode);
+
+        // Save to history
+        const prompt = mode === 'prompt' ? description : code;
+        saveHistory({ prompt, mode, language: mode === 'code' ? language : undefined }, { vizCode: rawCode });
       } else {
         setError('Failed to generate diagram. Please try again.');
       }
@@ -124,6 +133,26 @@ export default function Flowchart() {
     document.body.appendChild(link); link.click();
     document.body.removeChild(link); URL.revokeObjectURL(url);
   };
+
+  /* ── Restore from History page navigation ── */
+  useEffect(() => {
+    if (location.state?.fromHistory) {
+      if (location.state.outputData?.vizCode) {
+        setVizCode(location.state.outputData.vizCode);
+      }
+      if (location.state.inputData?.prompt) {
+        if (location.state.inputData.mode === 'code') {
+          setMode('code');
+          setCode(location.state.inputData.prompt);
+          if (location.state.inputData.language) setLanguage(location.state.inputData.language);
+        } else {
+          setMode('prompt');
+          setDescription(location.state.inputData.prompt);
+        }
+      }
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
 
   const selectedLang = LANGUAGES.find(l => l.id === language);
 
@@ -238,6 +267,7 @@ export default function Flowchart() {
 
             </>
           )}
+
 
           {/* Error */}
           {error && (

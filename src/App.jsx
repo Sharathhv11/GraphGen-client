@@ -5,11 +5,14 @@ import Signup from './pages/Signup/Signup';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import UserHome from './pages/UserHome/UserHome';
 import DFA from './pages/DFA/DFA';
+import NFA from './pages/NFA/NFA';
 import ERDiagram from './pages/ERDiagram/ERDiagram';
 import Flowchart from './pages/Flowchart/Flowchart';
+import DataStructure from './pages/DataStructure/DataStructure';
 import DashboardHome from './pages/UserHome/DashboardHome';
 import ComingSoon from './pages/UserHome/ComingSoon';
 import Demo from './pages/UserHome/Demo';
+import HistoryPage from './pages/History/History';
 
 function App() {
   return (
@@ -19,8 +22,11 @@ function App() {
         <Route path="/home" element={<UserHome />}>
           <Route index element={<DashboardHome />} />
           <Route path="dfa" element={<DFA />} />
+          <Route path="nfa" element={<NFA />} />
           <Route path="er-diagram" element={<ERDiagram />} />
           <Route path="flowchart" element={<Flowchart />} />
+          <Route path="data-structure" element={<DataStructure />} />
+          <Route path="history" element={<HistoryPage />} />
           <Route path="coming-soon" element={<ComingSoon />} />
           <Route path="demo" element={<Demo />} />
         </Route>

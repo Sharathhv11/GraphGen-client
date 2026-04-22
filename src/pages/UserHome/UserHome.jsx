@@ -95,8 +95,8 @@ export default function UserHome() {
             <div className="menu-group">
              
  <button 
-                className="menu-item"
-                onClick={() => {}}
+                className={`menu-item ${location.pathname.includes('/home/history') ? 'active-submenu' : ''}`}
+                onClick={() => navigate('/home/history')}
               >
                 <div className="menu-item-content">
                   <History size={18} />
@@ -124,7 +124,7 @@ export default function UserHome() {
                 </button>
                 <button 
                   className="submenu-item"
-                  onClick={() => {}}
+                  onClick={() => navigate('/home/nfa')}
                 >
                   <span className="submenu-text">NFA</span>
                 </button>
@@ -149,8 +149,8 @@ export default function UserHome() {
               </button>
               
               <button 
-                className="menu-item accordion-header"
-                onClick={() => {}}
+                className={`menu-item accordion-header ${location.pathname.includes('/home/data-structure') ? 'active-submenu' : ''}`}
+                onClick={() => navigate('/home/data-structure')}
               >
                 <div className="menu-item-content">
                   <span className="menu-text">Data Structure</span>

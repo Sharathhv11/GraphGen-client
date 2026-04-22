@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════
-   ER Diagram Page — Split-Pane Layout
-   (Modeled after DFA, with ER-specific theming)
+   NFA Generator — Split-Pane Layout
+   (Modeled after DFA, with NFA-specific orange theming)
    ═══════════════════════════════════════════════════ */
 
-.er-page {
+.nfa-page {
   height: calc(100dvh - var(--nav-height));
   display: flex;
   flex-direction: column;
@@ -12,7 +12,7 @@
   overflow: hidden;
 }
 
-.er-container {
+.nfa-container {
   display: flex;
   flex: 1;
   overflow: hidden;
@@ -25,8 +25,8 @@
 }
 
 /* ── Base Pane Styles ── */
-.er-input-pane,
-.er-output-pane {
+.nfa-input-pane,
+.nfa-output-pane {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -36,51 +36,51 @@
   scrollbar-width: none;
 }
 
-.er-input-pane::-webkit-scrollbar,
-.er-output-pane::-webkit-scrollbar {
+.nfa-input-pane::-webkit-scrollbar,
+.nfa-output-pane::-webkit-scrollbar {
   display: none;
 }
 
-.er-input-pane {
+.nfa-input-pane {
   border-right: 1px solid var(--border);
   background: var(--bg-secondary);
   backdrop-filter: blur(10px);
   max-width: 500px;
 }
 
-.er-output-pane {
+.nfa-output-pane {
   background: var(--bg-primary);
 }
 
 /* ── Header ── */
-.er-pane-header {
+.nfa-pane-header {
   margin-bottom: 1.75rem;
 }
 
-.er-title-row {
+.nfa-title-row {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   margin-bottom: 0.5rem;
 }
 
-.er-title-icon {
-  color: #2dd4bf; /* teal accent */
+.nfa-title-icon {
+  color: #f97316; /* orange accent */
 }
 
-.er-pane-header h2 {
+.nfa-pane-header h2 {
   font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-.er-pane-header p {
+.nfa-pane-header p {
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
-.er-output-header {
+.nfa-output-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -88,30 +88,30 @@
 }
 
 /* ── Form Elements ── */
-.er-input-group {
+.nfa-input-group {
   margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.er-input-group.er-flex-grow {
+.nfa-input-group.nfa-flex-grow {
   flex: 1;
 }
 
-.er-input-group label {
+.nfa-input-group label {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--text-secondary);
 }
 
-.er-label-with-action {
+.nfa-label-with-action {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.er-demo-link {
+.nfa-demo-link {
   font-size: 0.8rem;
   color: var(--text-muted);
   text-decoration: none;
@@ -125,14 +125,14 @@
   border: 1px solid transparent;
 }
 
-.er-demo-link:hover {
+.nfa-demo-link:hover {
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--border);
 }
 
-.er-input,
-.er-textarea {
+.nfa-input,
+.nfa-textarea {
   width: 100%;
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -143,68 +143,28 @@
   transition: var(--transition);
 }
 
-.er-textarea {
+.nfa-textarea {
   flex: 1;
   resize: none;
   font-family: inherit;
   line-height: 1.5;
-  min-height: 160px;
+  min-height: 200px;
 }
 
-.er-input:focus,
-.er-textarea:focus {
+.nfa-input:focus,
+.nfa-textarea:focus {
   outline: none;
-  border-color: #2dd4bf;
-  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
+  border-color: #f97316;
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.15);
 }
 
-.er-input::placeholder,
-.er-textarea::placeholder {
+.nfa-input::placeholder,
+.nfa-textarea::placeholder {
   color: var(--text-muted);
-}
-
-/* ── Example Prompt Chips ── */
-.er-examples {
-  margin-bottom: 1.25rem;
-}
-
-.er-examples-label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.er-examples-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.er-example-chip {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 260px;
-}
-
-.er-example-chip:hover {
-  border-color: #2dd4bf;
-  color: #2dd4bf;
-  background: rgba(45, 212, 191, 0.08);
 }
 
 /* ── Error State ── */
-.er-error-message {
+.nfa-error-message {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
@@ -218,16 +178,16 @@
   line-height: 1.5;
 }
 
-.er-error-message svg {
+.nfa-error-message svg {
   flex-shrink: 0;
   margin-top: 0.1rem;
 }
 
 /* ── Generate Button ── */
-.er-btn-generate {
+.nfa-btn-generate {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #14b8a6, #2dd4bf);
+  background: linear-gradient(135deg, #ea580c, #f97316);
   color: white;
   border: none;
   border-radius: var(--radius-sm);
@@ -242,13 +202,13 @@
   margin-top: auto;
 }
 
-.er-btn-generate:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0d9488, #14b8a6);
+.nfa-btn-generate:hover:not(:disabled) {
+  background: linear-gradient(135deg, #c2410c, #ea580c);
   opacity: 0.85;
-  box-shadow: 0 4px 18px rgba(45, 212, 191, 0.3);
+  box-shadow: 0 4px 18px rgba(249, 115, 22, 0.3);
 }
 
-.er-btn-generate:disabled {
+.nfa-btn-generate:disabled {
   background: var(--border);
   color: var(--text-secondary);
   cursor: not-allowed;
@@ -256,7 +216,7 @@
 }
 
 /* ── Download Button ── */
-.er-btn-download {
+.nfa-btn-download {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -271,13 +231,13 @@
   transition: var(--transition);
 }
 
-.er-btn-download:hover {
+.nfa-btn-download:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--text-secondary);
 }
 
 /* ── Output / Viz Area ── */
-.er-viz-render-area {
+.nfa-viz-render-area {
   flex: 1;
   background-color: #f8fafc;
   background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
@@ -293,7 +253,7 @@
   min-height: 400px;
 }
 
-.er-viz-container {
+.nfa-viz-container {
   width: 100%;
   height: 100%;
   flex: 1;
@@ -304,7 +264,7 @@
   background: transparent;
 }
 
-.er-viz-container > div {
+.nfa-viz-container > div {
   width: 100%;
   height: 100%;
   display: flex;
@@ -312,7 +272,7 @@
   justify-content: center;
 }
 
-.er-viz-container svg {
+.nfa-viz-container svg {
   max-width: 100%;
   max-height: 100%;
   width: auto !important;
@@ -320,8 +280,8 @@
 }
 
 /* ── Empty & Loading States ── */
-.er-empty-state,
-.er-loading-state {
+.nfa-empty-state,
+.nfa-loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -331,38 +291,38 @@
   padding: 3rem;
 }
 
-.er-empty-icon {
+.nfa-empty-icon {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ccfbf1, #99f6e4);
+  background: linear-gradient(135deg, #ffedd5, #fdba74);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.25rem;
-  color: #0d9488;
+  color: #c2410c;
 }
 
-.er-empty-state p {
+.nfa-empty-state p {
   font-size: 1.1rem;
   font-weight: 500;
   color: #000000;
   margin-bottom: 0.5rem;
 }
 
-.er-empty-state span {
+.nfa-empty-state span {
   font-size: 0.9rem;
   max-width: 340px;
   line-height: 1.5;
 }
 
-.er-loading-state p {
+.nfa-loading-state p {
   margin-top: 1.5rem;
   font-weight: 500;
   color: #000000;
 }
 
-.er-loading-subtext {
+.nfa-loading-subtext {
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #666666;
@@ -371,18 +331,18 @@
 }
 
 /* ── Spinners ── */
-.er-spinner {
-  animation: er-spin 1s linear infinite;
+.nfa-spinner {
+  animation: nfa-spin 1s linear infinite;
 }
 
-.er-spinner-large {
+.nfa-spinner-large {
   width: 48px;
   height: 48px;
-  color: #0d9488;
-  animation: er-spin 1s linear infinite;
+  color: #c2410c;
+  animation: nfa-spin 1s linear infinite;
 }
 
-@keyframes er-spin {
+@keyframes nfa-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
@@ -391,76 +351,72 @@
    Responsive Breakpoints
    ═══════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
-  .er-input-pane {
+  .nfa-input-pane {
     max-width: 400px;
     padding: 1.5rem;
   }
 
-  .er-output-pane {
+  .nfa-output-pane {
     padding: 1.5rem;
   }
 }
 
 @media (max-width: 900px) {
-  .er-page {
+  .nfa-page {
     height: auto;
     min-height: 100vh;
     overflow: visible;
   }
 
-  .er-container {
+  .nfa-container {
     flex-direction: column;
     overflow: visible;
   }
 
-  .er-input-pane,
-  .er-output-pane {
+  .nfa-input-pane,
+  .nfa-output-pane {
     flex: none;
     overflow-y: visible;
   }
 
-  .er-input-pane {
+  .nfa-input-pane {
     max-width: 100%;
     border-right: none;
     border-top: 1px solid var(--border);
   }
 
-  .er-textarea {
+  .nfa-textarea {
     min-height: 150px;
   }
 
-  .er-output-pane {
+  .nfa-output-pane {
     min-height: 60vh;
   }
 }
 
 @media (max-width: 600px) {
-  .er-input-pane,
-  .er-output-pane {
+  .nfa-input-pane,
+  .nfa-output-pane {
     padding: 1.25rem;
   }
 
-  .er-pane-header {
+  .nfa-pane-header {
     margin-bottom: 1.5rem;
   }
 
-  .er-pane-header h2 {
+  .nfa-pane-header h2 {
     font-size: 1.3rem;
   }
 
-  .er-btn-generate {
+  .nfa-btn-generate {
     padding: 0.875rem;
     font-size: 0.95rem;
-  }
-
-  .er-example-chip {
-    max-width: 200px;
   }
 }
 
 @media (max-width: 480px) {
-  .er-input-pane,
-  .er-output-pane {
+  .nfa-input-pane,
+  .nfa-output-pane {
     padding: 1rem;
   }
 }

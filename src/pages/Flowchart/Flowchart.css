@@ -344,7 +344,7 @@
 
 .fc-btn-generate:hover:not(:disabled) {
   background: linear-gradient(135deg, #2d6482, #3b7ea1);
-  transform: translateY(-1px);
+  opacity: 0.85;
   box-shadow: 0 4px 16px rgba(62, 130, 168, 0.35);
 }
 

@@ -1,0 +1,260 @@
+/* ═══════════════════════════════════════════════════
+   History Page — Full history dashboard
+   ═══════════════════════════════════════════════════ */
+
+.hist-page {
+  padding: 2rem 2.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+  min-height: 100%;
+}
+
+/* ── Header ── */
+.hist-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+.hist-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.hist-header-icon {
+  color: var(--text-muted);
+}
+
+.hist-header-left h1 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.hist-header-left p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0.15rem 0 0;
+}
+
+/* ── Toolbar ── */
+.hist-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.hist-search-wrap {
+  position: relative;
+}
+
+.hist-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.hist-search {
+  width: 100%;
+  padding: 0.65rem 0.85rem 0.65rem 2.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.hist-search:focus {
+  border-color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.hist-search::placeholder {
+  color: var(--text-muted);
+}
+
+.hist-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.hist-filter-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.hist-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.hist-chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--text-muted);
+}
+
+.hist-chip-active {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: var(--chip-color, var(--text-muted)) !important;
+  color: var(--chip-color, var(--text-primary));
+}
+
+/* ── History list ── */
+.hist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+/* ── Card ── */
+.hist-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.hist-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--text-muted);
+  transform: translateX(2px);
+}
+
+.hist-card-accent {
+  width: 4px;
+  align-self: stretch;
+  background: var(--card-accent, #6b7280);
+  flex-shrink: 0;
+}
+
+.hist-card-body {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  min-width: 0;
+}
+
+.hist-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+}
+
+.hist-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--card-accent, #6b7280) 15%, transparent);
+  color: var(--card-accent, #6b7280);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hist-card-date {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.hist-card-prompt {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hist-card-delete {
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.hist-card-delete:hover {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+/* ── Empty & Loading states ── */
+.hist-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.hist-empty-state .hist-empty-icon {
+  margin-bottom: 1rem;
+  opacity: 0.3;
+}
+
+.hist-empty-state p {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+  color: var(--text-secondary);
+}
+
+.hist-empty-state span {
+  font-size: 0.85rem;
+}
+
+.hist-spin {
+  animation: hist-spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes hist-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .hist-page {
+    padding: 1.25rem 1rem;
+  }
+  .hist-header-left h1 {
+    font-size: 1.25rem;
+  }
+}
