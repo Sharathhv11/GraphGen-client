@@ -31,6 +31,16 @@ export default function UserHome() {
     }
   }, [navigate]);
 
+  // Handle mobile responsiveness for sidebar navigation
+  useEffect(() => {
+    const handleAutoClose = () => {
+      if (window.innerWidth <= 768) {
+        setIsSidebarOpen(false);
+      }
+    };
+    handleAutoClose();
+  }, [location.pathname]);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
