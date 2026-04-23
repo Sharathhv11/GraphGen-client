@@ -49,6 +49,18 @@
   margin-bottom: 1.5rem;
 }
 
+@media (min-width: 640px) {
+  .hist-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .hist-search-wrap {
+    flex: 1;
+    max-width: 350px;
+  }
+}
+
 .hist-search-wrap {
   position: relative;
 }
@@ -139,19 +151,17 @@
   cursor: pointer;
   transition: var(--transition);
   overflow: hidden;
+  opacity: 0.85;
 }
 
 .hist-card:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: var(--text-muted);
-  transform: translateX(2px);
+  opacity: 1;
 }
 
 .hist-card-accent {
-  width: 4px;
-  align-self: stretch;
-  background: var(--card-accent, #6b7280);
-  flex-shrink: 0;
+  display: none;
 }
 
 .hist-card-body {
@@ -181,10 +191,36 @@
   letter-spacing: 0.03em;
 }
 
+.hist-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .hist-card-date {
   font-size: 0.73rem;
   color: var(--text-muted);
   flex-shrink: 0;
+}
+
+.hist-card-delete {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 50%;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.hist-card-delete:hover {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
 }
 
 .hist-card-prompt {
@@ -192,24 +228,30 @@
   font-size: 0.88rem;
   color: var(--text-primary);
   line-height: 1.4;
-  white-space: nowrap;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.hist-card-delete {
-  padding: 0.75rem;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: var(--transition);
-  flex-shrink: 0;
-}
-
-.hist-card-delete:hover {
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.1);
+@media (max-width: 480px) {
+  .hist-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  .hist-card-date {
+    font-size: 0.65rem;
+  }
+  .hist-filters {
+    gap: 0.35rem;
+  }
+  .hist-chip {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+  }
 }
 
 /* ── Empty & Loading states ── */

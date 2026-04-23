@@ -188,8 +188,8 @@
 .btn-generate {
   width: 100%;
   padding: 1rem;
-  background: var(--text-primary);
-  color: var(--bg-primary);
+  background: #a78bfa;
+  color: white;
   border: none;
   border-radius: var(--radius-sm);
   font-size: 1rem;
@@ -204,8 +204,8 @@
 }
 
 .btn-generate:hover:not(:disabled) {
-  opacity: 0.85;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  background: #8b5cf6;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
 }
 
 .btn-generate:disabled {

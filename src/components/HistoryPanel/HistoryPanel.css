@@ -90,10 +90,12 @@
   cursor: pointer;
   transition: var(--transition);
   min-width: 0;
+  opacity: 0.8;
 }
 
 .hp-item-main:hover {
   background: rgba(255, 255, 255, 0.05);
+  opacity: 1;
 }
 
 .hp-item-text {
@@ -110,13 +112,17 @@
 }
 
 .hp-item-delete {
-  padding: 0.5rem;
-  margin-right: 0.35rem;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  border-radius: var(--radius-sm);
+  border-radius: 50%;
   transition: var(--transition);
   flex-shrink: 0;
 }

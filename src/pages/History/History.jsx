@@ -195,24 +195,25 @@ export default function HistoryPage() {
                 onClick={() => handleSelect(item)}
                 style={{ '--card-accent': meta.color }}
               >
-                <div className="hist-card-accent" />
                 <div className="hist-card-body">
                   <div className="hist-card-top">
                     <div className="hist-card-badge">
                       <Icon size={14} />
                       <span>{meta.label}</span>
                     </div>
-                    <span className="hist-card-date">{formatDate(item.createdAt)}</span>
+                    <div className="hist-card-meta">
+                      <span className="hist-card-date">{formatDate(item.createdAt)}</span>
+                      <button
+                        className="hist-card-delete"
+                        onClick={(e) => handleDelete(item._id, e)}
+                        title="Delete"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
                   </div>
                   <p className="hist-card-prompt">{truncate(prompt)}</p>
                 </div>
-                <button
-                  className="hist-card-delete"
-                  onClick={(e) => handleDelete(item._id, e)}
-                  title="Delete"
-                >
-                  <Trash2 size={15} />
-                </button>
               </div>
             );
           })

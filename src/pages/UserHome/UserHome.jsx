@@ -1,16 +1,20 @@
-import { useNavigate, Outlet } from 'react-router-dom';
-import { Github, SquareMenu, ChevronRight, ChevronDown, Sun, Moon, LogOut, History } from 'lucide-react';
+import { useNavigate, Outlet, useLocation, Link } from 'react-router-dom';
+import { 
+  Github, SquareMenu, ChevronRight, ChevronDown, Sun, 
+  Moon, LogOut, History, Home as HomeIcon 
+} from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import useTitle from '../../utils/useTitle';
 import logolight from '../../assets/graphgen-light.png';
 import logodark from '../../assets/graphgen-dark.png';
 import './UserHome.css';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function UserHome() {
   const { theme, toggleTheme } = useTheme();
   useTitle('Dashboard');
   const navigate = useNavigate();
+  const location = useLocation();
   const [userName, setUserName] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isTocOpen, setIsTocOpen] = useState(false);
@@ -23,7 +27,6 @@ export default function UserHome() {
     if (!name && !token) {
       navigate('/login');
     } else {
-      // Use the name directly, default to 'User'
       setUserName(name || 'User');
     }
   }, [navigate]);
@@ -34,12 +37,58 @@ export default function UserHome() {
     navigate('/login');
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleToc = () => setIsTocOpen(!isTocOpen);
 
-  const toggleToc = () => {
-    setIsTocOpen(!isTocOpen);
+  // Breadcrumbs Logic
+  const renderBreadcrumbs = () => {
+    const path = location.pathname;
+    const parts = path.split('/').filter(p => p !== '');
+    
+    // Always start with Home
+    const crumbs = [{ label: 'Home', path: '/home', icon: HomeIcon }];
+
+    const lastPart = parts[parts.length - 1];
+    
+    // Check if nested in TOC (DFA, NFA)
+    const tocItems = ['dfa', 'nfa'];
+    if (tocItems.includes(lastPart)) {
+      crumbs.push({ label: 'TOC', path: null });
+    }
+
+    const labels = {
+      'dfa': 'DFA',
+      'nfa': 'NFA',
+      'er-diagram': 'ER Diagram',
+      'flowchart': 'Flowchart',
+      'data-structure': 'Data Structure',
+      'history': 'History'
+    };
+
+    if (lastPart && lastPart !== 'home') {
+      crumbs.push({ 
+        label: labels[lastPart] || lastPart.charAt(0).toUpperCase() + lastPart.slice(1), 
+        path: path 
+      });
+    }
+
+    return (
+      <nav className="breadcrumbs" aria-label="Breadcrumb">
+        {crumbs.map((crumb, idx) => (
+          <div key={idx} className="breadcrumb-item">
+            {idx > 0 && <ChevronRight size={12} className="breadcrumb-separator" />}
+            {crumb.path ? (
+              <Link to={crumb.path} className={`breadcrumb-link ${idx === crumbs.length - 1 ? 'active' : ''}`}>
+                {crumb.icon && <crumb.icon size={14} className="crumb-icon" />}
+                <span>{crumb.label}</span>
+              </Link>
+            ) : (
+              <span className="breadcrumb-text">{crumb.label}</span>
+            )}
+          </div>
+        ))}
+      </nav>
+    );
   };
 
   return (
@@ -169,6 +218,9 @@ export default function UserHome() {
 
         {/* Main Content Area */}
         <main className={`user-main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+          <div className="main-content-header">
+            {renderBreadcrumbs()}
+          </div>
           <Outlet />
         </main>
       </div>
