@@ -9,6 +9,7 @@ import NFA from './pages/NFA/NFA';
 import ERDiagram from './pages/ERDiagram/ERDiagram';
 import Flowchart from './pages/Flowchart/Flowchart';
 import DataStructure from './pages/DataStructure/DataStructure';
+import UMLDiagram from './pages/UMLDiagram/UMLDiagram';
 import DashboardHome from './pages/UserHome/DashboardHome';
 import ComingSoon from './pages/UserHome/ComingSoon';
 import Demo from './pages/UserHome/Demo';
@@ -27,6 +28,7 @@ function App() {
           <Route path="er-diagram" element={<ERDiagram />} />
           <Route path="flowchart" element={<Flowchart />} />
           <Route path="data-structure" element={<DataStructure />} />
+          <Route path="uml-diagram" element={<UMLDiagram />} />
           <Route path="history" element={<HistoryPage />} />
           <Route path="coming-soon" element={<ComingSoon />} />
           <Route path="demo" element={<Demo />} />

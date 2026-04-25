@@ -85,6 +85,7 @@ export default function UserHome() {
       'er-diagram': 'ER Diagram',
       'flowchart': 'Flowchart',
       'data-structure': 'Data Structure',
+      'uml-diagram': 'UML Diagram',
       'history': 'History',
       'api-keys': 'API Keys'
     };
@@ -274,6 +275,15 @@ export default function UserHome() {
               >
                 <div className="menu-item-content">
                   <span className="menu-text">Data Structure</span>
+                </div>
+              </button>
+
+              <button 
+                className={`menu-item accordion-header ${location.pathname.includes('/home/uml-diagram') ? 'active-submenu' : ''}`}
+                onClick={() => navigate('/home/uml-diagram')}
+              >
+                <div className="menu-item-content">
+                  <span className="menu-text">UML Diagram</span>
                 </div>
               </button>
               

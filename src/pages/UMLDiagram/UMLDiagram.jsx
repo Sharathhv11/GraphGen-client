@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, Database, Key } from 'lucide-react';
+import { ArrowUp, Download, Loader2, AlertCircle, Boxes } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
 import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
-import './ERDiagram.css';
+import './UMLDiagram.css';
 
 const EXAMPLE_PROMPTS = [
-  "Design an ER diagram for a Library system with Books, Members, and Loans",
-  "ER diagram for a University with Students, Courses, and Professors",
-  "Hospital management system with Patients, Doctors, and Appointments",
-  "E-commerce platform with Users, Products, Orders, and Reviews",
+  "Class diagram for an e-commerce system with User, Product, Cart, and Order",
+  "Sequence diagram showing user login flow with frontend, backend, and database",
+  "Use case diagram for an online banking system",
+  "Activity diagram for an order processing workflow",
+  "State diagram for a bug tracking system ticket lifecycle",
 ];
 
-export default function ERDiagram() {
-  useTitle('ER Diagram Generator');
+export default function UMLDiagram() {
+  useTitle('UML Diagram Generator');
   const location = useLocation();
   const navigate = useNavigate();
   const [description, setDescription] = useState('');
@@ -25,7 +26,7 @@ export default function ERDiagram() {
   const [error, setError] = useState(null);
   const [vizCode, setVizCode] = useState('');
 
-  const { saveHistory } = useHistory('er-diagram');
+  const { saveHistory } = useHistory('uml-diagram');
   const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
@@ -37,9 +38,33 @@ export default function ERDiagram() {
     }
   }, [location.state]);
 
+  /* ── Sanitize DOT code from common AI mistakes ── */
+  const sanitizeDotCode = (code) => {
+    let sanitized = code;
+
+    // Fix invalid edge operators: -o, --, <- all become ->
+    // Match patterns like `NodeA -o NodeB` or `NodeA -- NodeB` (outside of quoted strings)
+    sanitized = sanitized.replace(/(\w+["']?\s+)-o(\s+)/g, '$1->$2');
+    sanitized = sanitized.replace(/(\w+["']?\s+)--(\s+)/g, '$1->$2');
+    sanitized = sanitized.replace(/(\w+["']?\s+)<-(\s+)/g, '$1->$2');
+
+    // Also handle quoted node names: "Node A" -o "Node B"
+    sanitized = sanitized.replace(/(["']\s*)-o(\s*)/g, '$1->$2');
+    sanitized = sanitized.replace(/(["']\s*)--(\s*)/g, '$1->$2');
+    sanitized = sanitized.replace(/(["']\s*)<-(\s*)/g, '$1->$2');
+
+    // Fix \n inside record labels to \l (but not \\n which is already escaped)
+    // Only replace \n that appears inside label="..." of record-shaped nodes
+    sanitized = sanitized.replace(/(label\s*=\s*"[^"]*")/g, (match) => {
+      return match.replace(/\\n/g, '\\l');
+    });
+
+    return sanitized;
+  };
+
   const handleGenerate = async () => {
     if (!description.trim()) {
-      setError('Please provide a system description.');
+      setError('Please provide a UML description.');
       return;
     }
     const apiKey = getActiveKey();
@@ -52,7 +77,7 @@ export default function ERDiagram() {
     setError(null);
 
     try {
-      const response = await api.post('/api/diagram/toc/er', {
+      const response = await api.post('/api/diagram/uml', {
         query: description,
         apiKey,
       });
@@ -63,11 +88,14 @@ export default function ERDiagram() {
         // Strip markdown code block backticks if present
         rawCode = rawCode.replace(/```[a-zA-Z]*\n/gi, '').replace(/```/g, '').trim();
 
-        // Extract valid graphviz block — ER uses undirected 'graph'
+        // Extract valid graphviz block
         const graphMatch = rawCode.match(/(?:strict\s+)?(?:di)?graph\s+.*?\{[\s\S]*\}/i);
         if (graphMatch) {
           rawCode = graphMatch[0];
         }
+
+        // Sanitize common AI-generated DOT syntax errors
+        rawCode = sanitizeDotCode(rawCode);
 
         setVizCode(rawCode);
 
@@ -77,7 +105,7 @@ export default function ERDiagram() {
         setError('Failed to generate diagram. Invalid response format.');
       }
     } catch (err) {
-      console.error('Error generating ER Diagram:', err);
+      console.error('Error generating UML Diagram:', err);
       setError(
         err.response?.data?.message ||
           'Failed to connect to the server. Please check your API key and try again.'
@@ -95,7 +123,7 @@ export default function ERDiagram() {
   };
 
   const handleDownloadPNG = () => {
-    const svgElement = document.querySelector('.er-viz-container svg');
+    const svgElement = document.querySelector('.uml-viz-container svg');
     if (!svgElement) return;
 
     const viewBox = svgElement.viewBox.baseVal;
@@ -125,7 +153,7 @@ export default function ERDiagram() {
 
       const pngUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
-      link.download = 'er-diagram.png';
+      link.download = 'uml-diagram.png';
       link.href = pngUrl;
       document.body.appendChild(link);
       link.click();
@@ -135,18 +163,18 @@ export default function ERDiagram() {
   };
 
   return (
-    <div className="er-page">
-      <div className="er-container">
+    <div className="uml-page">
+      <div className="uml-container">
         {/* Left Pane - Inputs */}
-        <div className="er-input-pane">
-          <div className="er-pane-header">
-            <div className="er-title-row">
-              <Database size={22} className="er-title-icon" />
-              <h2>ER Diagram</h2>
+        <div className="uml-input-pane">
+          <div className="uml-pane-header">
+            <div className="uml-title-row">
+              <Boxes size={22} className="uml-title-icon" />
+              <h2>UML Diagram</h2>
             </div>
             <p>
-              Describe a real-world system and generate its Entity-Relationship diagram
-              automatically.
+              Describe a system, workflow, or interaction and generate its UML diagram
+              automatically. Supports Class, Sequence, Use Case, Activity, and State diagrams.
             </p>
           </div>
 
@@ -157,22 +185,22 @@ export default function ERDiagram() {
             </div>
           )}
 
-          <div className="er-input-group er-flex-grow">
-            <label htmlFor="erDescription">System Description</label>
+          <div className="uml-input-group uml-flex-grow">
+            <label htmlFor="umlDescription">Diagram Description</label>
             <div className="prompt-input-wrapper">
               <textarea
-                id="erDescription"
+                id="umlDescription"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="e.g. Design an ER diagram for a Library system with Books, Members, and Loans..."
-                className="er-textarea"
+                placeholder="e.g. Class diagram for an e-commerce system with User, Product, Cart, and Order..."
+                className="uml-textarea"
               />
               <button 
                 className="prompt-send-btn" 
                 onClick={handleGenerate}
                 disabled={loading || !description.trim()}
-                title="Generate ER Diagram"
+                title="Generate UML Diagram"
               >
                 {loading ? (
                   <Loader2 className="spinner" size={18} />
@@ -201,7 +229,7 @@ export default function ERDiagram() {
           </div>
 
           {error && (
-            <div className="er-error-message">
+            <div className="uml-error-message">
               <AlertCircle size={18} />
               <span>{error}</span>
             </div>
@@ -209,42 +237,42 @@ export default function ERDiagram() {
         </div>
 
         {/* Right Pane - Output */}
-        <div className="er-output-pane">
-          <div className="er-pane-header er-output-header">
+        <div className="uml-output-pane">
+          <div className="uml-pane-header uml-output-header">
             <h2>Generated Diagram</h2>
             {vizCode && (
-              <button className="er-btn-download" onClick={handleDownloadPNG} title="Download PNG">
+              <button className="uml-btn-download" onClick={handleDownloadPNG} title="Download PNG">
                 <Download size={18} />
                 <span>Export PNG</span>
               </button>
             )}
           </div>
 
-          <div className="er-viz-render-area">
+          <div className="uml-viz-render-area">
             {loading ? (
-              <div className="er-loading-state">
-                <Loader2 className="er-spinner-large" />
-                <p>Analyzing system description & building ER model...</p>
-                <span className="er-loading-subtext">
-                  The AI is identifying entities, attributes, and relationships. This may take a
+              <div className="uml-loading-state">
+                <Loader2 className="uml-spinner-large" />
+                <p>Analyzing description & generating UML diagram...</p>
+                <span className="uml-loading-subtext">
+                  The AI is determining the diagram type and building the structure. This may take a
                   moment.
                 </span>
               </div>
             ) : vizCode ? (
-              <div className="er-viz-container">
+              <div className="uml-viz-container">
                 <Graphviz
                   dot={vizCode}
                   options={{ zoom: true, height: '100%', width: '100%', fit: true }}
                 />
               </div>
             ) : (
-              <div className="er-empty-state">
-                <div className="er-empty-icon">
-                  <Database size={48} strokeWidth={1} />
+              <div className="uml-empty-state">
+                <div className="uml-empty-icon">
+                  <Boxes size={48} strokeWidth={1} />
                 </div>
                 <p>No diagram generated yet.</p>
                 <span>
-                  Describe a database system on the left and press <strong>Enter</strong> or click the arrow to generate.
+                  Describe a system or process on the left and press <strong>Enter</strong> or click the arrow to generate.
                 </span>
               </div>
             )}

@@ -158,20 +158,44 @@ export default function DataStructure() {
     }
   };
 
-  const handleDownloadSVG = () => {
+  const handleDownloadPNG = () => {
     const svgEl = document.querySelector('.ds-viz-container svg');
     if (!svgEl) return;
-    const blob = new Blob([new XMLSerializer().serializeToString(svgEl)], {
-      type: 'image/svg+xml;charset=utf-8',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'data-structure.svg';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+
+    const viewBox = svgEl.viewBox.baseVal;
+    let width = viewBox.width || svgEl.getBoundingClientRect().width;
+    let height = viewBox.height || svgEl.getBoundingClientRect().height;
+
+    const scale = 3;
+    width *= scale;
+    height *= scale;
+
+    const svgData = new XMLSerializer().serializeToString(svgEl);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    
+    const img = new Image();
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const DOMURL = window.URL || window.webkitURL || window;
+    const url = DOMURL.createObjectURL(svgBlob);
+
+    img.onload = () => {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      DOMURL.revokeObjectURL(url);
+
+      const pngUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = 'data-structure.png';
+      link.href = pngUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    img.src = url;
   };
 
   return (
@@ -255,9 +279,9 @@ export default function DataStructure() {
           <div className="ds-pane-header ds-output-header">
             <h2>Generated Diagram</h2>
             {vizCode && (
-              <button className="ds-btn-download" onClick={handleDownloadSVG}>
+              <button className="ds-btn-download" onClick={handleDownloadPNG}>
                 <Download size={16} />
-                <span>Export SVG</span>
+                <span>Export PNG</span>
               </button>
             )}
           </div>

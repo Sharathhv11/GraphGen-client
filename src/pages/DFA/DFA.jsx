@@ -91,22 +91,45 @@ export default function DFA() {
     }
   };
 
-  const handleDownloadSVG = () => {
+  const handleDownloadPNG = () => {
     // Graphviz-react renders an SVG inside its container
     const svgElement = document.querySelector('.viz-container svg');
     if (!svgElement) return;
 
+    const viewBox = svgElement.viewBox.baseVal;
+    let width = viewBox.width || svgElement.getBoundingClientRect().width;
+    let height = viewBox.height || svgElement.getBoundingClientRect().height;
+
+    const scale = 3;
+    width *= scale;
+    height *= scale;
+
     const svgData = new XMLSerializer().serializeToString(svgElement);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
     
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'dfa-diagram.svg';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const img = new Image();
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const DOMURL = window.URL || window.webkitURL || window;
+    const url = DOMURL.createObjectURL(svgBlob);
+
+    img.onload = () => {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      DOMURL.revokeObjectURL(url);
+
+      const pngUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = 'dfa-diagram.png';
+      link.href = pngUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    img.src = url;
   };
 
   return (
@@ -185,9 +208,9 @@ export default function DFA() {
           <div className="pane-header output-header">
             <h2>Generated Diagram</h2>
             {vizCode && (
-              <button className="btn-download" onClick={handleDownloadSVG} title="Download SVG">
+              <button className="btn-download" onClick={handleDownloadPNG} title="Download PNG">
                 <Download size={18} />
-                <span>Export SVG</span>
+                <span>Export PNG</span>
               </button>
             )}
           </div>
