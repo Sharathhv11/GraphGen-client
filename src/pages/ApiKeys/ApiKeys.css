@@ -430,6 +430,34 @@
   margin-top: 0.15rem;
 }
 
+/* ── Links ── */
+.apikeys-demo-link-empty {
+  margin-top: 1.25rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.apikeys-demo-link-empty:hover {
+  text-decoration: underline;
+  color: #10b981;
+}
+
+.apikeys-demo-link {
+  color: var(--text-primary);
+  text-decoration: underline;
+  font-weight: 500;
+  margin-left: 0.25rem;
+  transition: var(--transition);
+}
+
+.apikeys-demo-link:hover {
+  color: #10b981;
+}
+
+
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .apikeys-page {

@@ -128,7 +128,7 @@ export default function NFA() {
 
           {!hasActiveKey && (
             <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
-              <Key size={16} />
+              <AlertCircle size={16} />
               <span>No active API key — <strong>click to add one</strong></span>
             </div>
           )}

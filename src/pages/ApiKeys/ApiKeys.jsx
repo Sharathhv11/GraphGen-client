@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Key, Plus, Trash2, CheckCircle2, Circle, AlertCircle, Eye, EyeOff, Tag } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import useApiKeys from '../../utils/useApiKeys';
@@ -132,6 +133,9 @@ export default function ApiKeys() {
               </div>
               <p>No API keys added yet</p>
               <span>Add your first Gemini API key above to start generating diagrams.</span>
+              <Link to="/home/demo" className="apikeys-demo-link-empty">
+                Learn how to obtain a Gemini API key &rarr;
+              </Link>
             </div>
           ) : (
             <div className="apikeys-list">
@@ -225,7 +229,10 @@ export default function ApiKeys() {
           <AlertCircle size={15} />
           <span>
             API keys are stored locally in your browser and never sent to our servers.
-            They are passed directly to the Gemini API for diagram generation.
+            They are passed directly to the Gemini API for diagram generation.{' '}
+            <Link to="/home/demo" className="apikeys-demo-link">
+              Need help obtaining an API key?
+            </Link>
           </span>
         </div>
       </div>

@@ -237,13 +237,13 @@ export default function UserHome() {
               <div className={`submenu ${isTocOpen ? 'expanded' : 'collapsed'}`}>
                 
                 <button 
-                  className="submenu-item"
+                  className={`submenu-item ${location.pathname.includes('/home/dfa') ? 'active-submenu' : ''}`}
                   onClick={() => navigate('/home/dfa')}
                 >
                   <span className="submenu-text">DFA</span>
                 </button>
                 <button 
-                  className="submenu-item"
+                  className={`submenu-item ${location.pathname.includes('/home/nfa') ? 'active-submenu' : ''}`}
                   onClick={() => navigate('/home/nfa')}
                 >
                   <span className="submenu-text">NFA</span>
@@ -260,7 +260,7 @@ export default function UserHome() {
               </button>
               
               <button 
-                className="menu-item accordion-header"
+                className={`menu-item accordion-header ${location.pathname.includes('/home/er-diagram') ? 'active-submenu' : ''}`}
                 onClick={() => navigate('/home/er-diagram')}
               >
                 <div className="menu-item-content">
@@ -278,12 +278,6 @@ export default function UserHome() {
               </button>
               
             </div>
-          </div>
-          <div className="sidebar-footer">
-            <button className="btn-sidebar-logout" onClick={handleLogout}>
-              <LogOut size={18} />
-              <span>Logout</span>
-            </button>
           </div>
         </aside>
 
