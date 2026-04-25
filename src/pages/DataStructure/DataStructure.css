@@ -163,45 +163,7 @@
   color: var(--text-muted);
 }
 
-/* ── Example Prompt Chips ── */
-.ds-examples {
-  margin-bottom: 1.25rem;
-}
 
-.ds-examples-label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.ds-examples-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.ds-example-chip {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.35rem 0.85rem;
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 280px;
-}
-
-.ds-example-chip:hover {
-  border-color: #06b6d4;
-  color: #06b6d4;
-  background: rgba(6, 182, 212, 0.08);
-}
 
 /* ── Error State ── */
 .ds-error-message {
@@ -453,9 +415,7 @@
     font-size: 0.95rem;
   }
 
-  .ds-example-chip {
-    max-width: 200px;
-  }
+
 }
 
 @media (max-width: 480px) {

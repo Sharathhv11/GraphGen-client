@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Play, Download, Loader2, AlertCircle, Info, CircleDot } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowUp, Download, Loader2, AlertCircle, CircleDot, Key } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import './DFA.css';
+
+const EXAMPLE_PROMPTS = [
+  "Design a DFA for strings over {a,b} that end with 'abb'",
+  "DFA for binary strings with an even number of 0s",
+  "DFA that accepts strings over {0,1} starting with '10'",
+  "DFA for strings containing the substring '010'",
+];
 
 export default function DFA() {
   useTitle('DFA Generator');
   const location = useLocation();
-  const [apiKey, setApiKey] = useState('');
+  const navigate = useNavigate();
   const [description, setDescription] = useState('');
   
   const [loading, setLoading] = useState(false);
@@ -18,6 +26,7 @@ export default function DFA() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('dfa');
+  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -33,8 +42,9 @@ export default function DFA() {
       setError('Please provide a problem description.');
       return;
     }
-    if (!apiKey.trim()) {
-      setError('API Key is required.');
+    const apiKey = getActiveKey();
+    if (!apiKey) {
+      setError('No active API key. Please add one in API Key settings.');
       return;
     }
 
@@ -74,6 +84,13 @@ export default function DFA() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleGenerate();
+    }
+  };
+
   const handleDownloadSVG = () => {
     // Graphviz-react renders an SVG inside its container
     const svgElement = document.querySelector('.viz-container svg');
@@ -105,33 +122,54 @@ export default function DFA() {
             <p>Describe the Deterministic Finite Automaton (DFA) you want to generate.</p>
           </div>
 
-          <div className="input-group">
-            <div className="label-with-action">
-              <label htmlFor="apiKey">Gemini API Key</label>
-              <Link to="/home/demo" className="demo-link">
-                <Info size={14} />
-                <span>Demo / Guide</span>
-              </Link>
+          {!hasActiveKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
+              <Key size={16} />
+              <span>No active API key — <strong>click to add one</strong></span>
             </div>
-            <input 
-              type="password" 
-              id="apiKey" 
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter your Gemini API Key" 
-              className="dfa-input"
-            />
-          </div>
+          )}
 
           <div className="input-group flex-grow">
             <label htmlFor="description">Problem Description</label>
-            <textarea 
-              id="description" 
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Design a DFA for strings over {a,b} that end with 'abb'" 
-              className="dfa-textarea"
-            />
+            <div className="prompt-input-wrapper">
+              <textarea 
+                id="description" 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="e.g. Design a DFA for strings over {a,b} that end with 'abb'" 
+                className="dfa-textarea"
+              />
+              <button 
+                className="prompt-send-btn" 
+                onClick={handleGenerate}
+                disabled={loading || !description.trim()}
+                title="Generate DFA"
+              >
+                {loading ? (
+                  <Loader2 className="spinner" size={18} />
+                ) : (
+                  <ArrowUp size={18} />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Example Chips */}
+          <div className="prompt-examples">
+            <span className="prompt-examples-label">Try an example:</span>
+            <div className="prompt-examples-list">
+              {EXAMPLE_PROMPTS.map((prompt, i) => (
+                <button
+                  key={i}
+                  className="prompt-example-chip"
+                  onClick={() => setDescription(prompt)}
+                  title={prompt}
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
           </div>
 
           {error && (
@@ -140,24 +178,6 @@ export default function DFA() {
               <span>{error}</span>
             </div>
           )}
-
-          <button 
-            className="btn-generate" 
-            onClick={handleGenerate}
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="spinner" size={18} />
-                Generating Analysis...
-              </>
-            ) : (
-              <>
-                <Play size={18} />
-                Generate DFA
-              </>
-            )} 
-          </button>
         </div>
 
         {/* Right Pane - Output */}

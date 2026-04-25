@@ -79,3 +79,137 @@ a:hover {
 input, button, textarea {
   font-family: inherit;
 }
+
+/* ══════════════════════════════════════════════
+   SHARED: Prompt Input Wrapper + Send Button
+   Used across all diagram generator pages
+   ══════════════════════════════════════════════ */
+
+.prompt-input-wrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.prompt-input-wrapper textarea {
+  padding-right: 3.5rem; /* make room for send button */
+}
+
+.prompt-send-btn {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.prompt-send-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.prompt-send-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.prompt-send-btn .spinner {
+  animation: promptSpin 1s linear infinite;
+}
+
+@keyframes promptSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Standalone variant for code mode (not absolutely positioned) */
+.prompt-send-btn-standalone {
+  position: relative;
+  right: auto;
+  bottom: auto;
+  align-self: flex-end;
+  margin-top: 0.5rem;
+}
+
+/* ══════════════════════════════════════════════
+   SHARED: No API Key Banner
+   ══════════════════════════════════════════════ */
+
+.no-key-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  margin-bottom: 1rem;
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-sm);
+  color: #f59e0b;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.no-key-banner:hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.no-key-banner strong {
+  text-decoration: underline;
+}
+
+/* ══════════════════════════════════════════════
+   SHARED: Example Prompt Chips
+   ══════════════════════════════════════════════ */
+.prompt-examples {
+  margin-bottom: 1.25rem;
+}
+
+.prompt-examples-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.prompt-examples-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.prompt-example-chip {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+}
+
+.prompt-example-chip:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+

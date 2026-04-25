@@ -1,9 +1,10 @@
 import { useState, useEffect, Component } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Play, Download, Loader2, AlertCircle, Info, Network, RefreshCcw } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowUp, Download, Loader2, AlertCircle, Network, RefreshCcw, Key } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import './DataStructure.css';
 
@@ -60,8 +61,8 @@ const EXAMPLE_PROMPTS = [
 export default function DataStructure() {
   useTitle('Data Structure Visualizer');
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const [apiKey, setApiKey] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -69,6 +70,7 @@ export default function DataStructure() {
   const [renderKey, setRenderKey] = useState(0);
 
   const { saveHistory } = useHistory('data-structure');
+  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -88,8 +90,9 @@ export default function DataStructure() {
       setError('Please describe the data structure you want to visualize.');
       return;
     }
-    if (!apiKey.trim()) {
-      setError('Gemini API Key is required.');
+    const apiKey = getActiveKey();
+    if (!apiKey) {
+      setError('No active API key. Please add one in API Key settings.');
       return;
     }
 
@@ -148,6 +151,13 @@ export default function DataStructure() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleGenerate();
+    }
+  };
+
   const handleDownloadSVG = () => {
     const svgEl = document.querySelector('.ds-viz-container svg');
     if (!svgEl) return;
@@ -180,45 +190,48 @@ export default function DataStructure() {
             </p>
           </div>
 
-          {/* API Key */}
-          <div className="ds-input-group">
-            <div className="ds-label-with-action">
-              <label htmlFor="dsApiKey">Gemini API Key</label>
-              <Link to="/home/demo" className="ds-demo-link">
-                <Info size={13} />
-                <span>Guide</span>
-              </Link>
+          {!hasActiveKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
+              <Key size={16} />
+              <span>No active API key — <strong>click to add one</strong></span>
             </div>
-            <input
-              type="password"
-              id="dsApiKey"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter your Gemini API Key"
-              className="ds-input"
-            />
-          </div>
+          )}
 
           {/* Description */}
           <div className="ds-input-group ds-flex-grow">
             <label htmlFor="dsDescription">Describe your data structure</label>
-            <textarea
-              id="dsDescription"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Create a BST by inserting 50, 30, 70, 20, 40, 60, 80"
-              className="ds-textarea"
-            />
+            <div className="prompt-input-wrapper">
+              <textarea
+                id="dsDescription"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="e.g. Create a BST by inserting 50, 30, 70, 20, 40, 60, 80"
+                className="ds-textarea"
+              />
+              <button 
+                className="prompt-send-btn" 
+                onClick={handleGenerate}
+                disabled={loading || !description.trim()}
+                title="Generate Diagram"
+              >
+                {loading ? (
+                  <Loader2 className="spinner" size={18} />
+                ) : (
+                  <ArrowUp size={18} />
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Example Chips */}
-          <div className="ds-examples">
-            <span className="ds-examples-label">Try an example:</span>
-            <div className="ds-examples-list">
+          <div className="prompt-examples">
+            <span className="prompt-examples-label">Try an example:</span>
+            <div className="prompt-examples-list">
               {EXAMPLE_PROMPTS.map((prompt, i) => (
                 <button
                   key={i}
-                  className="ds-example-chip"
+                  className="prompt-example-chip"
                   onClick={() => setDescription(prompt)}
                   title={prompt}
                 >
@@ -235,21 +248,6 @@ export default function DataStructure() {
               <span>{error}</span>
             </div>
           )}
-
-          {/* Generate */}
-          <button className="ds-btn-generate" onClick={handleGenerate} disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="ds-spinner" size={17} />
-                Generating Visualization...
-              </>
-            ) : (
-              <>
-                <Play size={17} />
-                Generate Diagram
-              </>
-            )}
-          </button>
         </div>
 
         {/* ══ RIGHT PANE ══ */}
@@ -298,8 +296,7 @@ export default function DataStructure() {
                 </div>
                 <p>No diagram generated yet</p>
                 <span>
-                  Describe a data structure on the left and click <strong>Generate</strong> to
-                  visualize it.
+                  Describe a data structure on the left and press <strong>Enter</strong> or click the arrow to visualize it.
                 </span>
               </div>
             )}

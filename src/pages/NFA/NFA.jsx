@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Play, Download, Loader2, AlertCircle, Info, GitFork } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowUp, Download, Loader2, AlertCircle, GitFork, Key } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import './NFA.css';
+
+const EXAMPLE_PROMPTS = [
+  "Design an NFA for strings over {a,b} that end with 'ab'",
+  "NFA for strings where the third symbol from right is '1'",
+  "NFA that accepts strings starting with 'a' and ending with 'b'",
+  "NFA for the regular expression (a|b)*abb",
+];
 
 export default function NFA() {
   useTitle('NFA Generator');
   const location = useLocation();
-  const [apiKey, setApiKey] = useState('');
+  const navigate = useNavigate();
   const [description, setDescription] = useState('');
 
   const [loading, setLoading] = useState(false);
@@ -18,6 +26,7 @@ export default function NFA() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('nfa');
+  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -33,8 +42,9 @@ export default function NFA() {
       setError('Please provide a problem description.');
       return;
     }
-    if (!apiKey.trim()) {
-      setError('API Key is required.');
+    const apiKey = getActiveKey();
+    if (!apiKey) {
+      setError('No active API key. Please add one in API Key settings.');
       return;
     }
 
@@ -77,6 +87,13 @@ export default function NFA() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleGenerate();
+    }
+  };
+
   const handleDownloadSVG = () => {
     const svgElement = document.querySelector('.nfa-viz-container svg');
     if (!svgElement) return;
@@ -109,33 +126,54 @@ export default function NFA() {
             </p>
           </div>
 
-          <div className="nfa-input-group">
-            <div className="nfa-label-with-action">
-              <label htmlFor="nfaApiKey">Gemini API Key</label>
-              <Link to="/home/demo" className="nfa-demo-link">
-                <Info size={14} />
-                <span>Demo / Guide</span>
-              </Link>
+          {!hasActiveKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
+              <Key size={16} />
+              <span>No active API key — <strong>click to add one</strong></span>
             </div>
-            <input
-              type="password"
-              id="nfaApiKey"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter your Gemini API Key"
-              className="nfa-input"
-            />
-          </div>
+          )}
 
           <div className="nfa-input-group nfa-flex-grow">
             <label htmlFor="nfaDescription">Problem Description</label>
-            <textarea
-              id="nfaDescription"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Design an NFA for strings over {a,b} that end with 'ab'"
-              className="nfa-textarea"
-            />
+            <div className="prompt-input-wrapper">
+              <textarea
+                id="nfaDescription"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="e.g. Design an NFA for strings over {a,b} that end with 'ab'"
+                className="nfa-textarea"
+              />
+              <button 
+                className="prompt-send-btn" 
+                onClick={handleGenerate}
+                disabled={loading || !description.trim()}
+                title="Generate NFA"
+              >
+                {loading ? (
+                  <Loader2 className="spinner" size={18} />
+                ) : (
+                  <ArrowUp size={18} />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Example Chips */}
+          <div className="prompt-examples">
+            <span className="prompt-examples-label">Try an example:</span>
+            <div className="prompt-examples-list">
+              {EXAMPLE_PROMPTS.map((prompt, i) => (
+                <button
+                  key={i}
+                  className="prompt-example-chip"
+                  onClick={() => setDescription(prompt)}
+                  title={prompt}
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
           </div>
 
           {error && (
@@ -144,24 +182,6 @@ export default function NFA() {
               <span>{error}</span>
             </div>
           )}
-
-          <button
-            className="nfa-btn-generate"
-            onClick={handleGenerate}
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="nfa-spinner" size={18} />
-                Generating Analysis...
-              </>
-            ) : (
-              <>
-                <Play size={18} />
-                Generate NFA
-              </>
-            )}
-          </button>
         </div>
 
         {/* Right Pane - Output */}
@@ -199,7 +219,7 @@ export default function NFA() {
                 </div>
                 <p>No diagram generated yet.</p>
                 <span>
-                  Describe an NFA problem on the left and click <strong>Generate</strong> to create the automaton diagram.
+                  Describe an NFA problem on the left and press <strong>Enter</strong> or click the arrow to generate.
                 </span>
               </div>
             )}

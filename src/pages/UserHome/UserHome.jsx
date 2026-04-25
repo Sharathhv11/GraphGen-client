@@ -1,14 +1,14 @@
 import { useNavigate, Outlet, useLocation, Link } from 'react-router-dom';
 import { 
   Github, SquareMenu, ChevronRight, ChevronDown, Sun, 
-  Moon, LogOut, History, Home as HomeIcon 
+  Moon, LogOut, History, Home as HomeIcon, Key, User 
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import useTitle from '../../utils/useTitle';
 import logolight from '../../assets/graphgen-light.png';
 import logodark from '../../assets/graphgen-dark.png';
 import './UserHome.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function UserHome() {
   const { theme, toggleTheme } = useTheme();
@@ -18,6 +18,8 @@ export default function UserHome() {
   const [userName, setUserName] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isTocOpen, setIsTocOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileRef = useRef(null);
 
   useEffect(() => {
     // Check if user is logged in
@@ -40,6 +42,17 @@ export default function UserHome() {
     };
     handleAutoClose();
   }, [location.pathname]);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -72,7 +85,8 @@ export default function UserHome() {
       'er-diagram': 'ER Diagram',
       'flowchart': 'Flowchart',
       'data-structure': 'Data Structure',
-      'history': 'History'
+      'history': 'History',
+      'api-keys': 'API Keys'
     };
 
     if (lastPart && lastPart !== 'home') {
@@ -136,13 +150,60 @@ export default function UserHome() {
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
           
-          <div className="user-profile">
-            <img 
-              src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(userName)}`} 
-              alt={`${userName}'s Avatar`} 
-              className="user-avatar" 
-            />
-            <span className="user-greeting">Hi, {userName.split(' ')[0]}</span>
+          {/* User Profile with Dropdown */}
+          <div className="user-profile" ref={profileRef}>
+            <div 
+              className="user-profile-trigger"
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+            >
+              <img 
+                src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(userName)}`} 
+                alt={`${userName}'s Avatar`} 
+                className="user-avatar" 
+              />
+              <span className="user-greeting">Hi, {userName.split(' ')[0]}</span>
+              <ChevronDown size={14} className={`profile-chevron ${isProfileOpen ? 'rotated' : ''}`} />
+            </div>
+
+            {/* Profile Dropdown */}
+            {isProfileOpen && (
+              <div className="profile-dropdown">
+                <div className="profile-dropdown-header">
+                  <img 
+                    src={`https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(userName)}`} 
+                    alt={`${userName}'s Avatar`} 
+                    className="dropdown-avatar" 
+                  />
+                  <div>
+                    <span className="dropdown-name">{userName}</span>
+                    <span className="dropdown-role">Member</span>
+                  </div>
+                </div>
+                <div className="profile-dropdown-divider" />
+                <button 
+                  className="profile-dropdown-item"
+                  onClick={() => { setIsProfileOpen(false); /* future: navigate to profile */ }}
+                >
+                  <User size={16} />
+                  <span>View Profile</span>
+                </button>
+                <button 
+                  className="profile-dropdown-item"
+                  onClick={() => { setIsProfileOpen(false); navigate('/home/api-keys'); }}
+                >
+                  <Key size={16} />
+                  <span>API Keys</span>
+                </button>
+                <div className="profile-dropdown-divider" />
+                <button 
+                  className="profile-dropdown-item profile-dropdown-logout"
+                  onClick={() => { setIsProfileOpen(false); handleLogout(); }}
+                >
+                  <LogOut size={16} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </nav>

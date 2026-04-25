@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Play, Download, Loader2, AlertCircle, Info, Workflow,
-  MessageSquare, Code2,
+  ArrowUp, Download, Loader2, AlertCircle, Workflow,
+  MessageSquare, Code2, Key,
 } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import Editor from '@monaco-editor/react';
 import './Flowchart.css';
@@ -53,15 +54,16 @@ const LANGUAGES = [
 export default function Flowchart() {
   useTitle('Flowchart Generator');
   const location = useLocation();
+  const navigate = useNavigate();
 
   /* ── shared ── */
-  const [apiKey, setApiKey]   = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const [vizCode, setVizCode] = useState('');
 
   /* ── history (save only) ── */
   const { saveHistory } = useHistory('flowchart');
+  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── mode: 'prompt' | 'code' ── */
   const [mode, setMode] = useState('prompt');
@@ -83,8 +85,9 @@ export default function Flowchart() {
         : 'Please paste your code to convert.');
       return;
     }
-    if (!apiKey.trim()) {
-      setError('Gemini API Key is required.');
+    const apiKey = getActiveKey();
+    if (!apiKey) {
+      setError('No active API key. Please add one in API Key settings.');
       return;
     }
 
@@ -118,6 +121,13 @@ export default function Flowchart() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && mode === 'prompt') {
+      e.preventDefault();
+      handleGenerate();
     }
   };
 
@@ -172,23 +182,12 @@ export default function Flowchart() {
             <p>Convert code or text descriptions into visual flowcharts instantly.</p>
           </div>
 
-          {/* API Key */}
-          <div className="fc-input-group">
-            <div className="fc-label-with-action">
-              <label htmlFor="fcApiKey">Gemini API Key</label>
-              <Link to="/home/demo" className="fc-demo-link">
-                <Info size={13} /><span>Guide</span>
-              </Link>
+          {!hasActiveKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
+              <Key size={16} />
+              <span>No active API key — <strong>click to add one</strong></span>
             </div>
-            <input
-              type="password"
-              id="fcApiKey"
-              value={apiKey}
-              onChange={e => setApiKey(e.target.value)}
-              placeholder="Enter your Gemini API Key"
-              className="fc-input"
-            />
-          </div>
+          )}
 
           {/* Mode Toggle */}
           <div className="fc-mode-toggle">
@@ -213,16 +212,46 @@ export default function Flowchart() {
             <>
               <div className="fc-input-group fc-flex-grow">
                 <label htmlFor="fcDescription">Describe your process or algorithm</label>
-                <textarea
-                  id="fcDescription"
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
-                  placeholder="e.g. Create a flowchart for a user login process with OTP verification..."
-                  className="fc-textarea"
-                />
+                <div className="prompt-input-wrapper">
+                  <textarea
+                    id="fcDescription"
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="e.g. Create a flowchart for a user login process with OTP verification..."
+                    className="fc-textarea"
+                  />
+                  <button 
+                    className="prompt-send-btn" 
+                    onClick={handleGenerate}
+                    disabled={loading || !description.trim()}
+                    title="Generate Flowchart"
+                  >
+                    {loading ? (
+                      <Loader2 className="spinner" size={18} />
+                    ) : (
+                      <ArrowUp size={18} />
+                    )}
+                  </button>
+                </div>
               </div>
 
-
+              {/* Example Chips */}
+              <div className="prompt-examples">
+                <span className="prompt-examples-label">Try an example:</span>
+                <div className="prompt-examples-list">
+                  {EXAMPLE_PROMPTS.map((prompt, i) => (
+                    <button
+                      key={i}
+                      className="prompt-example-chip"
+                      onClick={() => setDescription(prompt)}
+                      title={prompt}
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </>
           )}
 
@@ -264,7 +293,19 @@ export default function Flowchart() {
                 </div>
               </div>
 
-
+              {/* Inline send for code mode */}
+              <button 
+                className="prompt-send-btn prompt-send-btn-standalone" 
+                onClick={handleGenerate}
+                disabled={loading || !code.trim()}
+                title="Generate Flowchart"
+              >
+                {loading ? (
+                  <Loader2 className="spinner" size={18} />
+                ) : (
+                  <ArrowUp size={18} />
+                )}
+              </button>
             </>
           )}
 
@@ -276,15 +317,6 @@ export default function Flowchart() {
               <span>{error}</span>
             </div>
           )}
-
-          {/* Generate Button */}
-          <button className="fc-btn-generate" onClick={handleGenerate} disabled={loading}>
-            {loading ? (
-              <><Loader2 className="fc-spinner" size={17} />Generating Flowchart...</>
-            ) : (
-              <><Play size={17} />Generate Flowchart</>
-            )}
-          </button>
         </div>
 
         {/* ══ RIGHT PANE ══ */}
@@ -322,8 +354,8 @@ export default function Flowchart() {
                 <p>No flowchart yet</p>
                 <span>
                   {mode === 'prompt'
-                    ? 'Describe an algorithm or process on the left and click Generate.'
-                    : 'Paste your Java, Python, or JavaScript code and click Generate.'}
+                    ? 'Describe an algorithm or process on the left and press Enter.'
+                    : 'Paste your Java, Python, or JavaScript code and click the arrow.'}
                 </span>
               </div>
             )}

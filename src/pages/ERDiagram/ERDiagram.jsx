@@ -1,18 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Play, Download, Loader2, AlertCircle, Info, Database } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowUp, Download, Loader2, AlertCircle, Database, Key } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import './ERDiagram.css';
 
-
+const EXAMPLE_PROMPTS = [
+  "Design an ER diagram for a Library system with Books, Members, and Loans",
+  "ER diagram for a University with Students, Courses, and Professors",
+  "Hospital management system with Patients, Doctors, and Appointments",
+  "E-commerce platform with Users, Products, Orders, and Reviews",
+];
 
 export default function ERDiagram() {
   useTitle('ER Diagram Generator');
   const location = useLocation();
-  const [apiKey, setApiKey] = useState('');
+  const navigate = useNavigate();
   const [description, setDescription] = useState('');
 
   const [loading, setLoading] = useState(false);
@@ -20,6 +26,7 @@ export default function ERDiagram() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('er-diagram');
+  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -35,8 +42,9 @@ export default function ERDiagram() {
       setError('Please provide a system description.');
       return;
     }
-    if (!apiKey.trim()) {
-      setError('API Key is required.');
+    const apiKey = getActiveKey();
+    if (!apiKey) {
+      setError('No active API key. Please add one in API Key settings.');
       return;
     }
 
@@ -79,6 +87,13 @@ export default function ERDiagram() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleGenerate();
+    }
+  };
+
   const handleDownloadSVG = () => {
     const svgElement = document.querySelector('.er-viz-container svg');
     if (!svgElement) return;
@@ -95,6 +110,7 @@ export default function ERDiagram() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
+
   return (
     <div className="er-page">
       <div className="er-container">
@@ -111,36 +127,55 @@ export default function ERDiagram() {
             </p>
           </div>
 
-          <div className="er-input-group">
-            <div className="er-label-with-action">
-              <label htmlFor="erApiKey">Gemini API Key</label>
-              <Link to="/home/demo" className="er-demo-link">
-                <Info size={14} />
-                <span>Demo / Guide</span>
-              </Link>
+          {!hasActiveKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
+              <Key size={16} />
+              <span>No active API key — <strong>click to add one</strong></span>
             </div>
-            <input
-              type="password"
-              id="erApiKey"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter your Gemini API Key"
-              className="er-input"
-            />
-          </div>
+          )}
 
           <div className="er-input-group er-flex-grow">
             <label htmlFor="erDescription">System Description</label>
-            <textarea
-              id="erDescription"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Design an ER diagram for a Library system with Books, Members, and Loans..."
-              className="er-textarea"
-            />
+            <div className="prompt-input-wrapper">
+              <textarea
+                id="erDescription"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="e.g. Design an ER diagram for a Library system with Books, Members, and Loans..."
+                className="er-textarea"
+              />
+              <button 
+                className="prompt-send-btn" 
+                onClick={handleGenerate}
+                disabled={loading || !description.trim()}
+                title="Generate ER Diagram"
+              >
+                {loading ? (
+                  <Loader2 className="spinner" size={18} />
+                ) : (
+                  <ArrowUp size={18} />
+                )}
+              </button>
+            </div>
           </div>
 
-
+          {/* Example Chips */}
+          <div className="prompt-examples">
+            <span className="prompt-examples-label">Try an example:</span>
+            <div className="prompt-examples-list">
+              {EXAMPLE_PROMPTS.map((prompt, i) => (
+                <button
+                  key={i}
+                  className="prompt-example-chip"
+                  onClick={() => setDescription(prompt)}
+                  title={prompt}
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {error && (
             <div className="er-error-message">
@@ -148,20 +183,6 @@ export default function ERDiagram() {
               <span>{error}</span>
             </div>
           )}
-
-          <button className="er-btn-generate" onClick={handleGenerate} disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="er-spinner" size={18} />
-                Generating ER Diagram...
-              </>
-            ) : (
-              <>
-                <Play size={18} />
-                Generate ER Diagram
-              </>
-            )}
-          </button>
         </div>
 
         {/* Right Pane - Output */}
@@ -200,8 +221,7 @@ export default function ERDiagram() {
                 </div>
                 <p>No diagram generated yet.</p>
                 <span>
-                  Describe a database system on the left and click <strong>Generate</strong> to
-                  create an ER diagram.
+                  Describe a database system on the left and press <strong>Enter</strong> or click the arrow to generate.
                 </span>
               </div>
             )}
