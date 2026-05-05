@@ -4,7 +4,6 @@ import { ArrowUp, Download, Loader2, AlertCircle, Boxes } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
-import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import './UMLDiagram.css';
 
@@ -27,7 +26,6 @@ export default function UMLDiagram() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('uml-diagram');
-  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -67,11 +65,6 @@ export default function UMLDiagram() {
       setError('Please provide a UML description.');
       return;
     }
-    const apiKey = getActiveKey();
-    if (!apiKey) {
-      setError('No active API key. Please add one in API Key settings.');
-      return;
-    }
 
     setLoading(true);
     setError(null);
@@ -79,7 +72,6 @@ export default function UMLDiagram() {
     try {
       const response = await api.post('/api/diagram/uml', {
         query: description,
-        apiKey,
       });
 
       if (response.data.status === 'success' && response.data.data.vizCode) {
@@ -177,13 +169,6 @@ export default function UMLDiagram() {
               automatically. Supports Class, Sequence, Use Case, Activity, and State diagrams.
             </p>
           </div>
-
-          {!hasActiveKey && (
-            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
-              <AlertCircle size={16} />
-              <span>No active API key — <strong>click to add one</strong></span>
-            </div>
-          )}
 
           <div className="uml-input-group uml-flex-grow">
             <label htmlFor="umlDescription">Diagram Description</label>

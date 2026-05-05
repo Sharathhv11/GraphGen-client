@@ -4,7 +4,6 @@ import { ArrowUp, Download, Loader2, AlertCircle, Network, RefreshCcw, Key } fro
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
-import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import './DataStructure.css';
 
@@ -70,7 +69,6 @@ export default function DataStructure() {
   const [renderKey, setRenderKey] = useState(0);
 
   const { saveHistory } = useHistory('data-structure');
-  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -90,11 +88,6 @@ export default function DataStructure() {
       setError('Please describe the data structure you want to visualize.');
       return;
     }
-    const apiKey = getActiveKey();
-    if (!apiKey) {
-      setError('No active API key. Please add one in API Key settings.');
-      return;
-    }
 
     setLoading(true);
     setError(null);
@@ -103,7 +96,6 @@ export default function DataStructure() {
     try {
       const response = await api.post('/api/diagram/ds', {
         query: description,
-        apiKey,
       });
 
       if (response.data.status === 'success' && response.data.data.vizCode) {
@@ -213,13 +205,6 @@ export default function DataStructure() {
               Heaps, Graphs, Stacks, Queues, and more.
             </p>
           </div>
-
-          {!hasActiveKey && (
-            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
-              <AlertCircle size={16} />
-              <span>No active API key — <strong>click to add one</strong></span>
-            </div>
-          )}
 
           {/* Description */}
           <div className="ds-input-group ds-flex-grow">

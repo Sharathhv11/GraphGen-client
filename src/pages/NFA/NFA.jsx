@@ -4,7 +4,6 @@ import { ArrowUp, Download, Loader2, AlertCircle, GitFork, Key } from 'lucide-re
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
-import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import './NFA.css';
 
@@ -26,7 +25,6 @@ export default function NFA() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('nfa');
-  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -42,11 +40,6 @@ export default function NFA() {
       setError('Please provide a problem description.');
       return;
     }
-    const apiKey = getActiveKey();
-    if (!apiKey) {
-      setError('No active API key. Please add one in API Key settings.');
-      return;
-    }
 
     setLoading(true);
     setError(null);
@@ -54,7 +47,6 @@ export default function NFA() {
     try {
       const response = await api.post('/api/diagram/toc/nfa', {
         query: description,
-        apiKey,
       });
 
       if (response.data.status === 'success' && response.data.data.vizCode) {
@@ -148,13 +140,6 @@ export default function NFA() {
               Describe the Nondeterministic Finite Automaton (NFA) you want to generate.
             </p>
           </div>
-
-          {!hasActiveKey && (
-            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
-              <AlertCircle size={16} />
-              <span>No active API key — <strong>click to add one</strong></span>
-            </div>
-          )}
 
           <div className="nfa-input-group nfa-flex-grow">
             <label htmlFor="nfaDescription">Problem Description</label>

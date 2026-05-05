@@ -1,6 +1,6 @@
 import { useNavigate, Outlet, useLocation, Link } from 'react-router-dom';
 import { 
-  Github, SquareMenu, ChevronRight, ChevronDown, Sun, 
+  Github, PanelLeft, ChevronRight, ChevronDown, Sun, 
   Moon, LogOut, History, Home as HomeIcon, Key, User 
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
@@ -86,8 +86,7 @@ export default function UserHome() {
       'flowchart': 'Flowchart',
       'data-structure': 'Data Structure',
       'uml-diagram': 'UML Diagram',
-      'history': 'History',
-      'api-keys': 'API Keys'
+      'history': 'History'
     };
 
     if (lastPart && lastPart !== 'home') {
@@ -121,7 +120,7 @@ export default function UserHome() {
       <nav className="user-navbar">
         <div className="nav-left">
           <button className="sidebar-toggle" onClick={toggleSidebar} title="Toggle Sidebar">
-            <SquareMenu size={28} />
+            <PanelLeft size={28} />
           </button>
           <img 
             src={theme === 'dark' ? logolight : logodark} 
@@ -183,17 +182,10 @@ export default function UserHome() {
                 <div className="profile-dropdown-divider" />
                 <button 
                   className="profile-dropdown-item"
-                  onClick={() => { setIsProfileOpen(false); /* future: navigate to profile */ }}
+                  onClick={() => { setIsProfileOpen(false); navigate('/home/profile'); }}
                 >
                   <User size={16} />
                   <span>View Profile</span>
-                </button>
-                <button 
-                  className="profile-dropdown-item"
-                  onClick={() => { setIsProfileOpen(false); navigate('/home/api-keys'); }}
-                >
-                  <Key size={16} />
-                  <span>API Keys</span>
                 </button>
                 <div className="profile-dropdown-divider" />
                 <button 

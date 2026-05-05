@@ -4,7 +4,6 @@ import { ArrowUp, Download, Loader2, AlertCircle, CircleDot, Key } from 'lucide-
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
-import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import './DFA.css';
 
@@ -26,7 +25,6 @@ export default function DFA() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('dfa');
-  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -42,19 +40,13 @@ export default function DFA() {
       setError('Please provide a problem description.');
       return;
     }
-    const apiKey = getActiveKey();
-    if (!apiKey) {
-      setError('No active API key. Please add one in API Key settings.');
-      return;
-    }
 
     setLoading(true);
     setError(null);
 
     try {
       const response = await api.post('/api/diagram/toc/dfa', {
-        query: description,
-        apiKey
+        query: description
       });
 
       if (response.data.status === 'success' && response.data.data.vizCode) {
@@ -144,13 +136,6 @@ export default function DFA() {
             </div>
             <p>Describe the Deterministic Finite Automaton (DFA) you want to generate.</p>
           </div>
-
-          {!hasActiveKey && (
-            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
-              <AlertCircle size={16} />
-              <span>No active API key — <strong>click to add one</strong></span>
-            </div>
-          )}
 
           <div className="input-group flex-grow">
             <label htmlFor="description">Problem Description</label>

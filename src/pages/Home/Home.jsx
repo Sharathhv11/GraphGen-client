@@ -159,9 +159,53 @@ export default function Home() {
           </section>
         </main>
 
-        {/* Footer */}
-        <footer className="footer">
-          <p>&copy; {new Date().getFullYear()} GraphGen. All rights reserved.</p>
+        <footer className="site-footer">
+          <div className="footer-top">
+            <div className="footer-brand">
+              <img 
+                src={theme === 'dark' ? logolight : logodark} 
+                alt="GraphGen Logo" 
+                className="footer-logo" 
+              />
+              <p className="footer-desc">
+                Intelligent workspace for generating professional diagrams and visualizations using natural language.
+              </p>
+              <div className="footer-socials">
+                <a href="https://github.com/Sharathhv11/MINI-Project-Back-end.git" target="_blank" rel="noopener noreferrer"><Github size={18} /></a>
+                <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+                <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+              </div>
+            </div>
+
+            <div className="footer-links-group">
+              <div className="footer-col">
+                <h4>Product</h4>
+                <a href="#features" onClick={(e) => { e.preventDefault(); scrollToSection('features'); }}>Features</a>
+                <Link to="/login">Try GraphGen</Link>
+                <a href="#pricing">Pricing</a>
+              </div>
+              <div className="footer-col">
+                <h4>Resources</h4>
+                <a href="#docs">Documentation</a>
+                <a href="#api">API Reference</a>
+                <a href="#blog">Blog</a>
+              </div>
+              <div className="footer-col">
+                <h4>Company</h4>
+                <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>About Us</a>
+                <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a>
+                <a href="#privacy">Privacy Policy</a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="footer-bottom">
+            <p>&copy; {new Date().getFullYear()} GraphGen. All rights reserved.</p>
+            <div className="footer-bottom-links">
+              <a href="#status">Status</a>
+              <a href="#security">Security</a>
+            </div>
+          </div>
         </footer>
       </div>
     </div>

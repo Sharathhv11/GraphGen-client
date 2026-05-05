@@ -7,7 +7,6 @@ import {
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
-import useApiKeys from '../../utils/useApiKeys';
 import { Graphviz } from 'graphviz-react';
 import Editor from '@monaco-editor/react';
 import './Flowchart.css';
@@ -63,7 +62,6 @@ export default function Flowchart() {
 
   /* ── history (save only) ── */
   const { saveHistory } = useHistory('flowchart');
-  const { getActiveKey, hasActiveKey } = useApiKeys();
 
   /* ── mode: 'prompt' | 'code' ── */
   const [mode, setMode] = useState('prompt');
@@ -85,17 +83,12 @@ export default function Flowchart() {
         : 'Please paste your code to convert.');
       return;
     }
-    const apiKey = getActiveKey();
-    if (!apiKey) {
-      setError('No active API key. Please add one in API Key settings.');
-      return;
-    }
 
     setLoading(true);
     setError(null);
 
     try {
-      const payload = { query, apiKey };
+      const payload = { query };
       if (mode === 'code') payload.language = language;
 
       const response = await api.post('/api/diagram/flow-chart', payload);
@@ -208,13 +201,6 @@ export default function Flowchart() {
             </div>
             <p>Convert code or text descriptions into visual flowcharts instantly.</p>
           </div>
-
-          {!hasActiveKey && (
-            <div className="no-key-banner" onClick={() => navigate('/home/api-keys')}>
-              <AlertCircle size={16} />
-              <span>No active API key — <strong>click to add one</strong></span>
-            </div>
-          )}
 
           {/* Mode Toggle */}
           <div className="fc-mode-toggle">

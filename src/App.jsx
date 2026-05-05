@@ -12,9 +12,8 @@ import DataStructure from './pages/DataStructure/DataStructure';
 import UMLDiagram from './pages/UMLDiagram/UMLDiagram';
 import DashboardHome from './pages/UserHome/DashboardHome';
 import ComingSoon from './pages/UserHome/ComingSoon';
-import Demo from './pages/UserHome/Demo';
 import HistoryPage from './pages/History/History';
-import ApiKeys from './pages/ApiKeys/ApiKeys';
+import Profile from './pages/Profile/Profile';
 
 function App() {
   return (
@@ -31,8 +30,7 @@ function App() {
           <Route path="uml-diagram" element={<UMLDiagram />} />
           <Route path="history" element={<HistoryPage />} />
           <Route path="coming-soon" element={<ComingSoon />} />
-          <Route path="demo" element={<Demo />} />
-          <Route path="api-keys" element={<ApiKeys />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
