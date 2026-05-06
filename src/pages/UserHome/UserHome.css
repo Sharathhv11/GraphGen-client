@@ -31,6 +31,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  height: var(--nav-height);
+  box-sizing: border-box;
 }
 
 .nav-left {

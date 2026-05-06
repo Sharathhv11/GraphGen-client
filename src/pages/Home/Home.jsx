@@ -1,4 +1,4 @@
-import { Github, PlayCircle, Code2, Cpu, ArrowRight, Mail, Sun, Moon } from 'lucide-react';
+import { Github, ArrowRight, Mail, Sun, Moon, ShieldCheck, Sparkles, Code2, Network } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import useTitle from '../../utils/useTitle';
 import './Home.css';
@@ -108,11 +108,21 @@ export default function Home() {
             <div className="about-grid">
               <div className="feature-card">
                 <div className="feature-icon">
-                  <PlayCircle />
+                  <ShieldCheck />
                 </div>
-                <h3 className="feature-title">Two-Stage Pipeline</h3>
+                <h3 className="feature-title">Secure Authentication</h3>
                 <p className="feature-desc">
-                  We use Gemma-3-27b for deep reasoning of DFA rules, then seamlessly pipeline the logic into Gemini to output native Viz.js DOT code.
+                  Enjoy secure, seamless registration and login with robust email verification powered by Brevo.
+                </p>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <Sparkles />
+                </div>
+                <h3 className="feature-title">Intelligent Generation</h3>
+                <p className="feature-desc">
+                  Simply enter a prompt and choose your diagram type. Our backend seamlessly integrates with Gemini AI to generate precise DOT code.
                 </p>
               </div>
 
@@ -120,19 +130,19 @@ export default function Home() {
                 <div className="feature-icon">
                   <Code2 />
                 </div>
-                <h3 className="feature-title">Code-Driven Generation</h3>
+                <h3 className="feature-title">Interactive Rendering</h3>
                 <p className="feature-desc">
-                  Say goodbye to WYSIWYG editors. Describe the problem (e.g., "strings over {`{a,b}`} ending with abb") and get mathematically sound, perfectly spaced directed graphs.
+                  Generated DOT code is instantly rendered into interactive, scalable vector graphics using the advanced Viz.js engine.
                 </p>
               </div>
-
+              
               <div className="feature-card">
                 <div className="feature-icon">
-                  <Cpu />
+                  <Network />
                 </div>
-                <h3 className="feature-title">React Flow & D3</h3>
+                <h3 className="feature-title">Multiple Diagram Types</h3>
                 <p className="feature-desc">
-                  Built on modern rendering engines to guarantee smooth zoom/pan interactions, exact node positioning, and orthogonal edge routing.
+                  Generate Flowcharts, ER Diagrams, UML, Data Structures, TOC, and more. All prompts and codes are safely persisted in MongoDB.
                 </p>
               </div>
             </div>

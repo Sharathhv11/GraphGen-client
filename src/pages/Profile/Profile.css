@@ -173,3 +173,49 @@
   color: white;
   transform: translateY(-1px);
 }
+
+/* Responsive Styles */
+@media (max-width: 640px) {
+  .profile-page {
+    padding: 1rem;
+  }
+
+  .profile-card {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .profile-avatar-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .profile-large-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .detail-group {
+    gap: 0.75rem;
+  }
+
+  .detail-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .detail-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .profile-actions {
+    justify-content: stretch;
+  }
+
+  .btn-logout-large {
+    width: 100%;
+    justify-content: center;
+  }
+}
