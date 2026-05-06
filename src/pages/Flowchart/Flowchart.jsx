@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowUp, Download, Loader2, AlertCircle, Workflow,
-  MessageSquare, Code2, Key,
+  MessageSquare, Code2,
 } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
@@ -10,6 +10,14 @@ import useHistory from '../../utils/useHistory';
 import { Graphviz } from 'graphviz-react';
 import Editor from '@monaco-editor/react';
 import './Flowchart.css';
+
+const AVAILABLE_MODELS = [
+  { id: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite' },
+  { id: 'gemini-2.5-flash',      label: 'Gemini 2.5 Flash' },
+  { id: 'gemma-4-26b-a4b-it',    label: 'Gemma 4 26B' },
+  { id: 'gemma-4-31b-it',        label: 'Gemma 4 31B' },
+  { id: 'gemini-flash-latest',   label: 'Gemini Flash Latest' },
+];
 
 /* ── Prompt-mode examples ─────────────────────────────────── */
 const EXAMPLE_PROMPTS = [
@@ -68,6 +76,7 @@ export default function Flowchart() {
 
   /* ── prompt-mode state ── */
   const [description, setDescription] = useState('');
+  const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash-lite');
 
   /* ── code-mode state ── */
   const [language, setLanguage]       = useState('python');
@@ -88,7 +97,7 @@ export default function Flowchart() {
     setError(null);
 
     try {
-      const payload = { query };
+      const payload = { query, model: selectedModel };
       if (mode === 'code') payload.language = language;
 
       const response = await api.post('/api/diagram/flow-chart', payload);
@@ -202,6 +211,9 @@ export default function Flowchart() {
             <p>Convert code or text descriptions into visual flowcharts instantly.</p>
           </div>
 
+          {/* Model Selector */}
+          {/* (now rendered inline inside the prompt-input-wrapper below) */}
+
           {/* Mode Toggle */}
           <div className="fc-mode-toggle">
             <button
@@ -234,6 +246,16 @@ export default function Flowchart() {
                     placeholder="e.g. Create a flowchart for a user login process with OTP verification..."
                     className="fc-textarea"
                   />
+                  <select
+                    className="model-select-inline"
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value)}
+                    title="Select AI model"
+                  >
+                    {AVAILABLE_MODELS.map((m) => (
+                      <option key={m.id} value={m.id}>{m.label}</option>
+                    ))}
+                  </select>
                   <button 
                     className="prompt-send-btn" 
                     onClick={handleGenerate}
@@ -306,19 +328,32 @@ export default function Flowchart() {
                 </div>
               </div>
 
-              {/* Inline send for code mode */}
-              <button 
-                className="prompt-send-btn prompt-send-btn-standalone" 
-                onClick={handleGenerate}
-                disabled={loading || !code.trim()}
-                title="Generate Flowchart"
-              >
+              {/* Inline send + model for code mode */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
+                <select
+                  className="model-select-inline"
+                  value={selectedModel}
+                  onChange={(e) => setSelectedModel(e.target.value)}
+                  title="Select AI model"
+                  style={{ position: 'static' }}
+                >
+                  {AVAILABLE_MODELS.map((m) => (
+                    <option key={m.id} value={m.id}>{m.label}</option>
+                  ))}
+                </select>
+                <button 
+                  className="prompt-send-btn prompt-send-btn-standalone" 
+                  onClick={handleGenerate}
+                  disabled={loading || !code.trim()}
+                  title="Generate Flowchart"
+                >
                 {loading ? (
                   <Loader2 className="spinner" size={18} />
                 ) : (
                   <ArrowUp size={18} />
                 )}
               </button>
+              </div>
             </>
           )}
 

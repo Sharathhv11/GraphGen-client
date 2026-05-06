@@ -91,16 +91,6 @@ input, button, textarea {
    Used across all diagram generator pages
    ══════════════════════════════════════════════ */
 
-.prompt-input-wrapper {
-  position: relative;
-  display: flex;
-  flex: 1;
-  min-height: 0;
-}
-
-.prompt-input-wrapper textarea {
-  padding-right: 3.5rem; /* make room for send button */
-}
 
 .prompt-send-btn {
   position: absolute;
@@ -218,4 +208,65 @@ input, button, textarea {
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.05);
 }
+
+/* ══════════════════════════════════════════════
+   SHARED: Model Selector (inline, inside textarea)
+   Sits at bottom-left of .prompt-input-wrapper
+   ══════════════════════════════════════════════ */
+
+.prompt-input-wrapper {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.prompt-input-wrapper textarea {
+  padding-right: 3.5rem;  /* room for send button */
+  padding-bottom: 2.8rem; /* room for model selector */
+}
+
+.model-select-inline {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  width: auto;
+  max-width: 180px;
+  padding: 0.3rem 1.8rem 0.3rem 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  z-index: 2;
+}
+
+.model-select-inline:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.model-select-inline:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.model-select-inline option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 0.4rem;
+  font-size: 0.8rem;
+}
+
 

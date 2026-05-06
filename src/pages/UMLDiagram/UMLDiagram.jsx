@@ -7,6 +7,14 @@ import useHistory from '../../utils/useHistory';
 import { Graphviz } from 'graphviz-react';
 import './UMLDiagram.css';
 
+const AVAILABLE_MODELS = [
+  { id: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite' },
+  { id: 'gemini-2.5-flash',      label: 'Gemini 2.5 Flash' },
+  { id: 'gemma-4-26b-a4b-it',    label: 'Gemma 4 26B' },
+  { id: 'gemma-4-31b-it',        label: 'Gemma 4 31B' },
+  { id: 'gemini-flash-latest',   label: 'Gemini Flash Latest' },
+];
+
 const EXAMPLE_PROMPTS = [
   "Class diagram for an e-commerce system with User, Product, Cart, and Order",
   "Sequence diagram showing user login flow with frontend, backend, and database",
@@ -20,6 +28,7 @@ export default function UMLDiagram() {
   const location = useLocation();
   const navigate = useNavigate();
   const [description, setDescription] = useState('');
+  const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash-lite');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -72,6 +81,7 @@ export default function UMLDiagram() {
     try {
       const response = await api.post('/api/diagram/uml', {
         query: description,
+        model: selectedModel,
       });
 
       if (response.data.status === 'success' && response.data.data.vizCode) {
@@ -181,6 +191,16 @@ export default function UMLDiagram() {
                 placeholder="e.g. Class diagram for an e-commerce system with User, Product, Cart, and Order..."
                 className="uml-textarea"
               />
+              <select
+                className="model-select-inline"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                title="Select AI model"
+              >
+                {AVAILABLE_MODELS.map((m) => (
+                  <option key={m.id} value={m.id}>{m.label}</option>
+                ))}
+              </select>
               <button 
                 className="prompt-send-btn" 
                 onClick={handleGenerate}

@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, GitFork, Key } from 'lucide-react';
+import { ArrowUp, Download, Loader2, AlertCircle, GitFork } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
 import { Graphviz } from 'graphviz-react';
 import './NFA.css';
+
+const AVAILABLE_MODELS = [
+  { id: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite' },
+  { id: 'gemini-2.5-flash',      label: 'Gemini 2.5 Flash' },
+  { id: 'gemma-4-26b-a4b-it',    label: 'Gemma 4 26B' },
+  { id: 'gemma-4-31b-it',        label: 'Gemma 4 31B' },
+  { id: 'gemini-flash-latest',   label: 'Gemini Flash Latest' },
+];
 
 const EXAMPLE_PROMPTS = [
   "Design an NFA for strings over {a,b} that end with 'ab'",
@@ -19,6 +27,7 @@ export default function NFA() {
   const location = useLocation();
   const navigate = useNavigate();
   const [description, setDescription] = useState('');
+  const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash-lite');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -47,6 +56,7 @@ export default function NFA() {
     try {
       const response = await api.post('/api/diagram/toc/nfa', {
         query: description,
+        model: selectedModel,
       });
 
       if (response.data.status === 'success' && response.data.data.vizCode) {
@@ -152,6 +162,16 @@ export default function NFA() {
                 placeholder="e.g. Design an NFA for strings over {a,b} that end with 'ab'"
                 className="nfa-textarea"
               />
+              <select
+                className="model-select-inline"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                title="Select AI model"
+              >
+                {AVAILABLE_MODELS.map((m) => (
+                  <option key={m.id} value={m.id}>{m.label}</option>
+                ))}
+              </select>
               <button 
                 className="prompt-send-btn" 
                 onClick={handleGenerate}

@@ -1,6 +1,6 @@
 import { useState, useEffect, Component } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, Network, RefreshCcw, Key } from 'lucide-react';
+import { ArrowUp, Download, Loader2, AlertCircle, Network, RefreshCcw } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
@@ -49,6 +49,14 @@ class GraphvizErrorBoundary extends Component {
 }
 
 /* ── Example prompts ── */
+const AVAILABLE_MODELS = [
+  { id: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite' },
+  { id: 'gemini-2.5-flash',      label: 'Gemini 2.5 Flash' },
+  { id: 'gemma-4-26b-a4b-it',    label: 'Gemma 4 26B' },
+  { id: 'gemma-4-31b-it',        label: 'Gemma 4 31B' },
+  { id: 'gemini-flash-latest',   label: 'Gemini Flash Latest' },
+];
+
 const EXAMPLE_PROMPTS = [
   'Create a BST by inserting 50, 30, 70, 20, 40, 60, 80',
   'Visualize a singly linked list with values 10 → 20 → 30 → 40',
@@ -63,6 +71,7 @@ export default function DataStructure() {
   const navigate = useNavigate();
 
   const [description, setDescription] = useState('');
+  const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash-lite');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [vizCode, setVizCode] = useState('');
@@ -96,6 +105,7 @@ export default function DataStructure() {
     try {
       const response = await api.post('/api/diagram/ds', {
         query: description,
+        model: selectedModel,
       });
 
       if (response.data.status === 'success' && response.data.data.vizCode) {
@@ -218,6 +228,16 @@ export default function DataStructure() {
                 placeholder="e.g. Create a BST by inserting 50, 30, 70, 20, 40, 60, 80"
                 className="ds-textarea"
               />
+              <select
+                className="model-select-inline"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                title="Select AI model"
+              >
+                {AVAILABLE_MODELS.map((m) => (
+                  <option key={m.id} value={m.id}>{m.label}</option>
+                ))}
+              </select>
               <button 
                 className="prompt-send-btn" 
                 onClick={handleGenerate}
