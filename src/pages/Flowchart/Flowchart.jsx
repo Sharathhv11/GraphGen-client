@@ -9,6 +9,7 @@ import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
 import { Graphviz } from 'graphviz-react';
 import Editor from '@monaco-editor/react';
+import geminiIcon from '../../assets/gemini-icon.png';
 import './Flowchart.css';
 
 const AVAILABLE_MODELS = [
@@ -407,6 +408,9 @@ export default function Flowchart() {
                 </span>
               </div>
             )}
+          </div>
+          <div className="powered-by-gemini">
+            powered by <img src={geminiIcon} alt="Gemini" /> gemini
           </div>
         </div>
 

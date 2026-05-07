@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Clock, Trash2, Loader2, Workflow, CircleDot, GitFork,
-  Database, Network, Search, Filter,
+  Database, Network, Search, Filter, Box
 } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
@@ -14,7 +14,8 @@ const TYPE_META = {
   dfa:              { label: 'DFA',             icon: CircleDot, route: '/home/dfa',             color: '#a78bfa' },
   nfa:              { label: 'NFA',             icon: GitFork,   route: '/home/nfa',             color: '#f97316' },
   'er-diagram':     { label: 'ER Diagram',      icon: Database,  route: '/home/er-diagram',      color: '#3b82f6' },
-  'data-structure': { label: 'Data Structure',   icon: Network,   route: '/home/data-structure',  color: '#06b6d4' },
+  'data-structure': { label: 'Data Structure',  icon: Network,   route: '/home/data-structure',  color: '#06b6d4' },
+  'uml-diagram':    { label: 'UML Diagram',     icon: Box,       route: '/home/uml-diagram',     color: '#eab308' },
 };
 
 const ALL_TYPES = Object.keys(TYPE_META);

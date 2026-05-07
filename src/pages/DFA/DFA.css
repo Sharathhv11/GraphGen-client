@@ -154,10 +154,13 @@
   min-height: 200px;
 }
 
-.dfa-input:focus, .dfa-select:focus, .dfa-textarea:focus {
+.dfa-input:focus,
+.dfa-select:focus,
+.dfa-textarea:focus,
+.dfa-page .prompt-input-wrapper:focus-within {
   outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
 .dfa-input::placeholder, .dfa-textarea::placeholder {

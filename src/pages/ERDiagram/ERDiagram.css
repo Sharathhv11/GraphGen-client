@@ -152,7 +152,8 @@
 }
 
 .er-input:focus,
-.er-textarea:focus {
+.er-textarea:focus,
+.er-page .prompt-input-wrapper:focus-within {
   outline: none;
   border-color: #2dd4bf;
   box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);

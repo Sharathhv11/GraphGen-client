@@ -5,6 +5,7 @@ import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
 import { Graphviz } from 'graphviz-react';
+import geminiIcon from '../../assets/gemini-icon.png';
 import './UMLDiagram.css';
 
 const AVAILABLE_MODELS = [
@@ -281,6 +282,9 @@ export default function UMLDiagram() {
                 </span>
               </div>
             )}
+          </div>
+          <div className="powered-by-gemini">
+            powered by <img src={geminiIcon} alt="Gemini" /> gemini
           </div>
         </div>
       </div>

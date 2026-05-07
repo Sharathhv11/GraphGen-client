@@ -152,7 +152,8 @@
 }
 
 .fc-input:focus,
-.fc-textarea:focus {
+.fc-textarea:focus,
+.fc-page .prompt-input-wrapper:focus-within {
   outline: none;
   border-color: #5eacd3;
   box-shadow: 0 0 0 2px rgba(94, 172, 211, 0.15);
