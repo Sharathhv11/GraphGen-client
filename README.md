@@ -22,15 +22,13 @@ GraphGen is an AI-powered diagram generation platform that converts natural-lang
 
 ### 3) Dashboard Home (`/home`)
 - Configure your Gemini API key in **API Key Manager**.
-- Gemini is the LLM provider used to generate diagram DOT code (get a key from Google AI Studio).
+- Gemini is the LLM provider used to generate diagram DOT code (create a key: https://ai.google.dev/gemini-api/docs/api-key).
 - Explore the Learning Center guides for each diagram type.
 - Navigate tools from the sidebar.
 
 ### 4) Diagram Generation Pages
 Available generators:
-- `TOC (Theory of Computation)`
-  - `DFA` (`/home/dfa`)
-  - `NFA` (`/home/nfa`)
+- `TOC (Theory of Computation): DFA` (`/home/dfa`), `NFA` (`/home/nfa`)
 - `Flowchart` (`/home/flowchart`)
 - `ER Diagram` (`/home/er-diagram`)
 - `Data Structure` (`/home/data-structure`)
