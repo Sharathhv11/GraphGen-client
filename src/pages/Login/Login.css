@@ -314,6 +314,8 @@
 /* ── Google Auth Section ── */
 .google-auth-section {
   margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: center;
 }
 
 .google-btn-wrapper {
@@ -324,6 +326,12 @@
 
 .google-btn-wrapper > div {
   width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.google-btn-wrapper button {
+  margin: 0 auto !important;
 }
 
 .google-btn-wrapper iframe {
