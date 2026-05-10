@@ -5,6 +5,7 @@ import {
   Sparkles, Target, Compass, Image as ImageIcon
 } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
+import ApiKeyManager from './ApiKeyManager';
 import './DashboardHome.css';
 
 // Import learning examples
@@ -109,6 +110,9 @@ export default function DashboardHome() {
 
   return (
     <div className="dash-home">
+      {/* API Key Configuration */}
+      <ApiKeyManager />
+
       {/* Hero Section */}
       <header className="dash-hero">
         <h1>Welcome to GraphGen</h1>

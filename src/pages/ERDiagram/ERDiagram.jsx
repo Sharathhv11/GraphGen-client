@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, Database } from 'lucide-react';
+import { ArrowUp, Download, Loader2, AlertCircle, Database, Key } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeyStatus from '../../utils/useApiKeyStatus';
 import { Graphviz } from 'graphviz-react';
 import geminiIcon from '../../assets/gemini-icon.png';
 import './ERDiagram.css';
@@ -35,6 +36,7 @@ export default function ERDiagram() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('er-diagram');
+  const { hasApiKey } = useApiKeyStatus();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -142,6 +144,14 @@ export default function ERDiagram() {
       <div className="er-container">
         {/* Left Pane - Inputs */}
         <div className="er-input-pane">
+
+          {/* No API Key Banner */}
+          {!hasApiKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home')}>
+              <Key size={14} />
+              <span>No API key configured. <strong>Go to Dashboard</strong> to add your Gemini key.</span>
+            </div>
+          )}
           <div className="er-pane-header">
             <div className="er-title-row">
               <Database size={22} className="er-title-icon" />

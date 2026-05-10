@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, User, Mail, Lock, Eye, EyeOff, Loader, AlertCircle, CheckCircle } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import { useTheme } from '../../context/ThemeContext';
 import useTitle from '../../utils/useTitle';
 import logolight from '../../assets/graphgen-light.png';
@@ -15,6 +16,7 @@ export default function Signup() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -58,6 +60,30 @@ export default function Signup() {
     }
   };
 
+  // ── Google OAuth handler ──
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setGoogleLoading(true);
+    setError('');
+
+    try {
+      const res = await api.post('/api/auth/google', {
+        credential: credentialResponse.credential,
+      });
+
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userName', res.data.user?.name || 'User');
+      navigate('/home');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Google sign-up failed. Please try again.');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Google sign-in was cancelled or failed. Please try again.');
+  };
+
   return (
     <div className="signup-page">
       <div className="signup-container">
@@ -81,6 +107,33 @@ export default function Signup() {
               <span>{success}</span>
             </div>
           )}
+
+          {/* ── Google Sign-Up ── */}
+          <div className="google-auth-section">
+            {googleLoading ? (
+              <div className="google-loading">
+                <Loader className="spinner" />
+                <span>Signing up with Google...</span>
+              </div>
+            ) : (
+              <div className="google-btn-wrapper">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme={theme === 'dark' ? 'filled_black' : 'outline'}
+                  size="large"
+                  width="100%"
+                  text="signup_with"
+                  shape="rectangular"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ── Divider ── */}
+          <div className="signup-divider">
+            <span>or sign up with email</span>
+          </div>
 
           <form className="signup-form" onSubmit={handleSubmit}>
             <div className="form-group">

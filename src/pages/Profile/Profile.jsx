@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, LogOut, Shield, ChevronLeft } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
+import ApiKeyManager from '../UserHome/ApiKeyManager';
 import './Profile.css';
 
 export default function Profile() {
@@ -92,6 +93,9 @@ export default function Profile() {
             </button>
           </div>
         </div>
+
+        {/* API Key Management */}
+        <ApiKeyManager />
       </div>
     </div>
   );

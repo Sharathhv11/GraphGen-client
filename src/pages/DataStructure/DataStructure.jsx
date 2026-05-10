@@ -1,9 +1,10 @@
 import { useState, useEffect, Component } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, Network, RefreshCcw } from 'lucide-react';
+import { ArrowUp, Download, Loader2, AlertCircle, Network, RefreshCcw, Key } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeyStatus from '../../utils/useApiKeyStatus';
 import { Graphviz } from 'graphviz-react';
 import geminiIcon from '../../assets/gemini-icon.png';
 import './DataStructure.css';
@@ -79,6 +80,7 @@ export default function DataStructure() {
   const [renderKey, setRenderKey] = useState(0);
 
   const { saveHistory } = useHistory('data-structure');
+  const { hasApiKey } = useApiKeyStatus();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -206,6 +208,14 @@ export default function DataStructure() {
       <div className="ds-container">
         {/* ══ LEFT PANE ══ */}
         <div className="ds-input-pane">
+
+          {/* No API Key Banner */}
+          {!hasApiKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home')}>
+              <Key size={14} />
+              <span>No API key configured. <strong>Go to Dashboard</strong> to add your Gemini key.</span>
+            </div>
+          )}
           <div className="ds-pane-header">
             <div className="ds-title-row">
               <Network size={22} className="ds-title-icon" />

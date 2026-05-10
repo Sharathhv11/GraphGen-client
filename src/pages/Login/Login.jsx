@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Mail, Lock, Eye, EyeOff, Loader, AlertCircle } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import { useTheme } from '../../context/ThemeContext';
 import useTitle from '../../utils/useTitle';
 import logolight from '../../assets/graphgen-light.png';
@@ -15,6 +16,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
@@ -49,6 +51,30 @@ export default function Login() {
     }
   };
 
+  // ── Google OAuth handler ──
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setGoogleLoading(true);
+    setError('');
+
+    try {
+      const res = await api.post('/api/auth/google', {
+        credential: credentialResponse.credential,
+      });
+
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('userName', res.data.user?.name || 'User');
+      navigate('/home');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Google sign-in failed. Please try again.');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Google sign-in was cancelled or failed. Please try again.');
+  };
+
   return (
     <div className="login-page">
       <div className="login-container">
@@ -65,6 +91,33 @@ export default function Login() {
               <span>{error}</span>
             </div>
           )}
+
+          {/* ── Google Sign-In ── */}
+          <div className="google-auth-section">
+            {googleLoading ? (
+              <div className="google-loading">
+                <Loader className="spinner" />
+                <span>Signing in with Google...</span>
+              </div>
+            ) : (
+              <div className="google-btn-wrapper">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme={theme === 'dark' ? 'filled_black' : 'outline'}
+                  size="large"
+                  width="100%"
+                  text="continue_with"
+                  shape="rectangular"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* ── Divider ── */}
+          <div className="login-divider">
+            <span>or continue with email</span>
+          </div>
 
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">

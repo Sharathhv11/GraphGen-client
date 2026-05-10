@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, Boxes } from 'lucide-react';
+import { ArrowUp, Download, Loader2, AlertCircle, Boxes, Key } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeyStatus from '../../utils/useApiKeyStatus';
 import { Graphviz } from 'graphviz-react';
 import geminiIcon from '../../assets/gemini-icon.png';
 import './UMLDiagram.css';
@@ -36,6 +37,7 @@ export default function UMLDiagram() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('uml-diagram');
+  const { hasApiKey } = useApiKeyStatus();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -170,6 +172,14 @@ export default function UMLDiagram() {
       <div className="uml-container">
         {/* Left Pane - Inputs */}
         <div className="uml-input-pane">
+
+          {/* No API Key Banner */}
+          {!hasApiKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home')}>
+              <Key size={14} />
+              <span>No API key configured. <strong>Go to Dashboard</strong> to add your Gemini key.</span>
+            </div>
+          )}
           <div className="uml-pane-header">
             <div className="uml-title-row">
               <Boxes size={22} className="uml-title-icon" />

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, GitFork } from 'lucide-react';
+import { ArrowUp, Download, Loader2, AlertCircle, GitFork, Key } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
+import useApiKeyStatus from '../../utils/useApiKeyStatus';
 import { Graphviz } from 'graphviz-react';
 import geminiIcon from '../../assets/gemini-icon.png';
 import './NFA.css';
@@ -35,6 +36,7 @@ export default function NFA() {
   const [vizCode, setVizCode] = useState('');
 
   const { saveHistory } = useHistory('nfa');
+  const { hasApiKey } = useApiKeyStatus();
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -142,6 +144,14 @@ export default function NFA() {
       <div className="nfa-container">
         {/* Left Pane - Inputs */}
         <div className="nfa-input-pane">
+
+          {/* No API Key Banner */}
+          {!hasApiKey && (
+            <div className="no-key-banner" onClick={() => navigate('/home')}>
+              <Key size={14} />
+              <span>No API key configured. <strong>Go to Dashboard</strong> to add your Gemini key.</span>
+            </div>
+          )}
           <div className="nfa-pane-header">
             <div className="nfa-title-row">
               <GitFork size={22} className="nfa-title-icon" />
