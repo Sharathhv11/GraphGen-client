@@ -27,8 +27,8 @@ GraphGen is an AI-powered diagram generation platform that converts natural-lang
 
 ### 4) Diagram Generation Pages
 Available generators:
-- `TOC → DFA` (`/home/dfa`)
-- `TOC → NFA` (`/home/nfa`)
+- `Theory of Computation (TOC) → DFA` (`/home/dfa`)
+- `Theory of Computation (TOC) → NFA` (`/home/nfa`)
 - `Flowchart` (`/home/flowchart`)
 - `ER Diagram` (`/home/er-diagram`)
 - `Data Structure` (`/home/data-structure`)
