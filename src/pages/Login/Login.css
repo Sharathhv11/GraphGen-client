@@ -339,7 +339,6 @@
 }
 
 .google-btn-wrapper iframe {
-  width: 100% !important;
   border-radius: var(--radius-sm) !important;
 }
 
