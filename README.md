@@ -1,6 +1,6 @@
 # GraphGen Client
 
-GraphGen is an AI-powered diagram generation platform that converts natural-language prompts (and, for flowcharts, source code) into visual diagrams such as DFA, NFA, Flowcharts, ER diagrams, Data Structures, and UML diagrams.
+GraphGen is an AI-powered diagram generation platform that converts natural-language prompts (and, for flowcharts, source code) into visual diagrams such as Theory of Computation (TOC) automata (DFA/NFA), Flowcharts, ER diagrams, Data Structures, and UML diagrams.
 
 🔗 **Live App:** https://graphgen1.vercel.app
 
@@ -27,8 +27,8 @@ GraphGen is an AI-powered diagram generation platform that converts natural-lang
 
 ### 4) Diagram Generation Pages
 Available generators:
-- `Theory of Computation (TOC) → DFA` (`/home/dfa`)
-- `Theory of Computation (TOC) → NFA` (`/home/nfa`)
+- `TOC → DFA` (`/home/dfa`)
+- `TOC → NFA` (`/home/nfa`)
 - `Flowchart` (`/home/flowchart`)
 - `ER Diagram` (`/home/er-diagram`)
 - `Data Structure` (`/home/data-structure`)
