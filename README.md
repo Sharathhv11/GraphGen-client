@@ -4,7 +4,7 @@ GraphGen is an AI-powered diagram generation platform that converts natural-lang
 
 🔗 **Live App:** https://graphgen1.vercel.app
 
-![GraphGen Logo](./src/assets/graphgen-dark.png)
+![GraphGen Logo](./src/assets/logo.png)
 
 ---
 
@@ -21,7 +21,7 @@ GraphGen is an AI-powered diagram generation platform that converts natural-lang
 - User is redirected to the dashboard workspace (`/home`).
 
 ### 3) Dashboard Home (`/home`)
-- Configure personal Gemini API key in **API Key Manager**.
+- Configure your Gemini API key in **API Key Manager** (Gemini is the LLM provider used to generate diagram DOT code).
 - Explore the Learning Center guides for each diagram type.
 - Navigate tools from the sidebar.
 
