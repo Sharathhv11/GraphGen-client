@@ -171,20 +171,24 @@
 /* ── Google Auth Section ── */
 .google-auth-section {
   margin-bottom: 0.25rem;
+  width: 100%;
 }
 
 .google-btn-wrapper {
   display: flex;
-  justify-content: center;
   width: 100%;
 }
 
 .google-btn-wrapper > div {
   width: 100% !important;
+  display: flex !important;
 }
 
-.google-btn-wrapper iframe {
+.google-btn-wrapper > div > div,
+.google-btn-wrapper iframe,
+.google-btn-wrapper [role='button'] {
   width: 100% !important;
+  max-width: none !important;
   border-radius: var(--radius-sm) !important;
 }
 
