@@ -315,20 +315,17 @@
 .google-auth-section {
   margin-bottom: 0.25rem;
   display: flex;
-  justify-content: stretch;
   width: 100%;
 }
 
 .google-btn-wrapper {
   display: flex;
-  justify-content: stretch;
   width: 100%;
 }
 
 .google-btn-wrapper > div {
   width: 100% !important;
   display: flex !important;
-  justify-content: stretch !important;
 }
 
 .google-btn-wrapper > div > div,
