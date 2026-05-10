@@ -1,16 +1,84 @@
-# React + Vite
+# GraphGen Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GraphGen is an AI-powered diagram generation platform that converts natural-language prompts (and, for flowcharts, source code) into visual diagrams such as DFA, NFA, Flowcharts, ER diagrams, Data Structures, and UML diagrams.
 
-Currently, two official plugins are available:
+🔗 **Live App:** https://graphgen1.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![GraphGen Logo](./src/assets/graphgen-dark.png)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Website Workflow (End-to-End)
 
-## Expanding the ESLint configuration
+### 1) Landing Page (`/`)
+- View product overview, features, and contact links.
+- Switch light/dark theme from the top navigation.
+- Continue to authentication via **Log in** or **Sign up**.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 2) Login (`/login`)
+- Authenticate using email/password or Google OAuth.
+- On success, token + username are stored in local storage.
+- User is redirected to the dashboard workspace (`/home`).
+
+### 3) Dashboard Home (`/home`)
+- Configure personal Gemini API key in **API Key Manager**.
+- Explore the Learning Center guides for each diagram type.
+- Navigate tools from the sidebar.
+
+### 4) Diagram Generation Pages
+Available generators:
+- `TOC → DFA` (`/home/dfa`)
+- `TOC → NFA` (`/home/nfa`)
+- `Flowchart` (`/home/flowchart`)
+- `ER Diagram` (`/home/er-diagram`)
+- `Data Structure` (`/home/data-structure`)
+- `UML Diagram` (`/home/uml-diagram`)
+
+Common workflow on generator pages:
+1. Enter prompt/code input.
+2. Choose AI model.
+3. Generate diagram (Graphviz DOT output rendered visually).
+4. Export result as PNG.
+5. Save generation in History.
+
+### 5) History (`/home/history`)
+- View all generated outputs grouped by type.
+- Search and filter previous generations.
+- Restore an item back into its original generator page.
+- Delete history entries when needed.
+
+### 6) Profile & Session
+- Access profile from the top-right avatar menu.
+- Logout clears local session and redirects to login.
+
+---
+
+## Visuals from the Application
+
+### Learning Center DFA Example
+![DFA Example](./src/assets/learning-examples/dfa-example.png)
+
+---
+
+## Tech Stack
+- **Frontend:** React + Vite
+- **Routing:** React Router
+- **Rendering:** Graphviz (`graphviz-react`)
+- **Editor (Flowchart code mode):** Monaco Editor
+- **HTTP Client:** Axios
+
+---
+
+## Local Development
+
+```bash
+npm install
+npm run dev
+```
+
+Build and lint:
+
+```bash
+npm run lint
+npm run build
+```
