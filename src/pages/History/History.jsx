@@ -102,6 +102,22 @@ export default function HistoryPage() {
     return text.length > maxLen ? text.slice(0, maxLen) + '…' : text;
   };
 
+  const getOutputTags = (item) => {
+    const outputData = item.outputData || {};
+    const tags = [];
+
+    if (outputData.vizCode) tags.push('Diagram');
+    if (typeof outputData.regularExpression === 'string' && outputData.regularExpression.trim()) tags.push('Regex');
+
+    const grammar = outputData.contextFreeGrammar;
+    const hasGrammar = Array.isArray(grammar)
+      ? grammar.some(Boolean)
+      : typeof grammar === 'string' && grammar.trim();
+    if (hasGrammar) tags.push('CFG');
+
+    return tags;
+  };
+
   const typeCounts = {};
   history.forEach((h) => {
     typeCounts[h.actionType] = (typeCounts[h.actionType] || 0) + 1;
@@ -188,6 +204,7 @@ export default function HistoryPage() {
             const Icon = meta.icon;
             const prompt =
               item.inputData?.prompt || item.inputData?.query || item.inputData?.code || '';
+            const outputTags = getOutputTags(item);
 
             return (
               <div
@@ -214,6 +231,13 @@ export default function HistoryPage() {
                     </div>
                   </div>
                   <p className="hist-card-prompt">{truncate(prompt)}</p>
+                  {outputTags.length > 0 && (
+                    <div className="hist-card-tags">
+                      {outputTags.map((tag) => (
+                        <span key={tag} className="hist-card-tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             );
