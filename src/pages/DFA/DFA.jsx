@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, CircleDot, Key } from 'lucide-react';
+import { ArrowUp, Download, Loader2, AlertCircle, CircleDot, Key, Copy, Check } from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
 import useApiKeyStatus from '../../utils/useApiKeyStatus';
+import { copyToClipboard } from '../../utils/clipboard';
 import { Graphviz } from 'graphviz-react';
 import geminiIcon from '../../assets/gemini-icon.png';
 import './DFA.css';
@@ -34,6 +35,11 @@ export default function DFA() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [vizCode, setVizCode] = useState('');
+  const [regularExpression, setRegularExpression] = useState('');
+  const [contextFreeGrammar, setContextFreeGrammar] = useState([]);
+  const [activeTab, setActiveTab] = useState('diagram');
+  const [copiedType, setCopiedType] = useState('');
+  const copyTimerRef = useRef(null);
 
   const { saveHistory } = useHistory('dfa');
   const { hasApiKey } = useApiKeyStatus();
@@ -41,11 +47,35 @@ export default function DFA() {
   /* ── Restore from History page navigation ── */
   useEffect(() => {
     if (location.state?.fromHistory) {
-      if (location.state.outputData?.vizCode) setVizCode(location.state.outputData.vizCode);
+      setVizCode(location.state.outputData?.vizCode || '');
+      setRegularExpression(
+        typeof location.state.outputData?.regularExpression === 'string'
+          ? location.state.outputData.regularExpression
+          : ''
+      );
+      if (Array.isArray(location.state.outputData?.contextFreeGrammar)) {
+        setContextFreeGrammar(location.state.outputData.contextFreeGrammar.filter(Boolean));
+      } else if (typeof location.state.outputData?.contextFreeGrammar === 'string') {
+        setContextFreeGrammar(
+          location.state.outputData.contextFreeGrammar
+            .split('\n')
+            .map((rule) => rule.trim())
+            .filter(Boolean)
+        );
+      } else {
+        setContextFreeGrammar([]);
+      }
       if (location.state.inputData?.prompt) setDescription(location.state.inputData.prompt);
+      setActiveTab('diagram');
       window.history.replaceState({}, '');
     }
   }, [location.state]);
+
+  useEffect(() => () => {
+    if (copyTimerRef.current) {
+      clearTimeout(copyTimerRef.current);
+    }
+  }, []);
 
   const handleGenerate = async () => {
     if (!description.trim()) {
@@ -62,8 +92,9 @@ export default function DFA() {
         model: selectedModel,
       });
 
-      if (response.data.status === 'success' && response.data.data.vizCode) {
-        let rawCode = response.data.data.vizCode;
+      if (response.data.status === 'success' && response.data.data) {
+        const responseData = response.data.data;
+        let rawCode = responseData.vizCode || '';
         
         // Strip markdown code block backticks if present (e.g., ```dot ... ```)
         rawCode = rawCode.replace(/```[a-zA-Z]*\n/gi, '').replace(/```/g, '').trim();
@@ -75,11 +106,31 @@ export default function DFA() {
         }
 
         setVizCode(rawCode);
+        setRegularExpression(typeof responseData.regularExpression === 'string' ? responseData.regularExpression.trim() : '');
+        setContextFreeGrammar(
+          Array.isArray(responseData.contextFreeGrammar)
+            ? responseData.contextFreeGrammar.filter(Boolean)
+            : typeof responseData.contextFreeGrammar === 'string'
+              ? responseData.contextFreeGrammar.split('\n').map((rule) => rule.trim()).filter(Boolean)
+              : []
+        );
+        setActiveTab('diagram');
 
         // Save to history
-        saveHistory({ prompt: description }, { vizCode: rawCode });
+        saveHistory(
+          { prompt: description },
+          {
+            vizCode: rawCode,
+            regularExpression: typeof responseData.regularExpression === 'string' ? responseData.regularExpression.trim() : '',
+            contextFreeGrammar: Array.isArray(responseData.contextFreeGrammar)
+              ? responseData.contextFreeGrammar.filter(Boolean)
+              : typeof responseData.contextFreeGrammar === 'string'
+                ? responseData.contextFreeGrammar.split('\n').map((rule) => rule.trim()).filter(Boolean)
+                : [],
+          }
+        );
       } else {
-        setError('Failed to generate diagram. Invalid response format.');
+        setError('Failed to generate output. Invalid response format.');
       }
     } catch (err) {
       console.error('Error generating DFA:', err);
@@ -135,6 +186,30 @@ export default function DFA() {
       document.body.removeChild(link);
     };
     img.src = url;
+  };
+
+  const markCopied = (type) => {
+    setCopiedType(type);
+    if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => setCopiedType(''), 1800);
+  };
+
+  const handleCopyRegex = async () => {
+    const result = await copyToClipboard(regularExpression);
+    if (result.success) {
+      markCopied('regex');
+    } else {
+      setError(result.error);
+    }
+  };
+
+  const handleCopyCFG = async () => {
+    const result = await copyToClipboard(contextFreeGrammar.join('\n'));
+    if (result.success) {
+      markCopied('cfg');
+    } else {
+      setError(result.error);
+    }
   };
 
   return (
@@ -222,8 +297,8 @@ export default function DFA() {
         {/* Right Pane - Output */}
         <div className="dfa-output-pane">
           <div className="pane-header output-header">
-            <h2>Generated Diagram</h2>
-            {vizCode && (
+            <h2>Generated Output</h2>
+            {activeTab === 'diagram' && vizCode && (
               <button className="btn-download" onClick={handleDownloadPNG} title="Download PNG">
                 <Download size={18} />
                 <span>Export PNG</span>
@@ -231,27 +306,84 @@ export default function DFA() {
             )}
           </div>
 
-          <div className="viz-render-area">
-            {loading ? (
-              <div className="loading-state">
-                <Loader2 className="spinner-large" />
-                <p>Analyzing description and rendering graph...</p>
-                <span className="loading-subtext">This process involves deep reasoning and may take a few moments.</span>
-              </div>
-            ) : vizCode ? (
-              <div className="viz-container">
-                <Graphviz 
-                  dot={vizCode} 
-                  options={{ zoom: true, height: "100%", width: "100%", fit: true }} 
-                />
+          <div className="output-tabs">
+            <button className={`output-tab ${activeTab === 'diagram' ? 'active' : ''}`} onClick={() => setActiveTab('diagram')}>
+              Diagram
+            </button>
+            <button className={`output-tab ${activeTab === 'regex' ? 'active' : ''}`} onClick={() => setActiveTab('regex')}>
+              Regular Expression
+            </button>
+            <button className={`output-tab ${activeTab === 'cfg' ? 'active' : ''}`} onClick={() => setActiveTab('cfg')}>
+              Context-Free Grammar
+            </button>
+          </div>
+
+          <div className={`viz-render-area ${activeTab !== 'diagram' ? 'text-mode' : ''}`}>
+            {activeTab === 'diagram' ? (
+              loading ? (
+                <div className="loading-state">
+                  <Loader2 className="spinner-large" />
+                  <p>Analyzing description and rendering graph...</p>
+                  <span className="loading-subtext">This process involves deep reasoning and may take a few moments.</span>
+                </div>
+              ) : vizCode ? (
+                <div className="viz-container">
+                  <Graphviz
+                    dot={vizCode}
+                    options={{ zoom: true, height: "100%", width: "100%", fit: true }}
+                  />
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <div className="dfa-empty-icon">
+                    <CircleDot size={44} strokeWidth={1.2} />
+                  </div>
+                  <p>No diagram generated yet.</p>
+                  <span>Enter your configuration and description on the left to begin.</span>
+                </div>
+              )
+            ) : activeTab === 'regex' ? (
+              <div className="text-output-block">
+                <div className="text-output-header">
+                  <h3>Regular Expression</h3>
+                  <button className="btn-copy" onClick={handleCopyRegex} disabled={!regularExpression}>
+                    {copiedType === 'regex' ? <Check size={16} /> : <Copy size={16} />}
+                    <span>{copiedType === 'regex' ? 'Copied' : 'Copy Regex'}</span>
+                  </button>
+                </div>
+                {loading ? (
+                  <div className="text-loading">Loading regular expression…</div>
+                ) : regularExpression ? (
+                  <>
+                    <p className="text-output-description">Equivalent pattern for the generated automaton:</p>
+                    <pre className="text-output-pre">{regularExpression}</pre>
+                  </>
+                ) : (
+                  <p className="text-output-empty">Regular expression is not available for this output.</p>
+                )}
               </div>
             ) : (
-              <div className="empty-state">
-                <div className="dfa-empty-icon">
-                  <CircleDot size={44} strokeWidth={1.2} />
+              <div className="text-output-block">
+                <div className="text-output-header">
+                  <h3>Context-Free Grammar</h3>
+                  <button className="btn-copy" onClick={handleCopyCFG} disabled={contextFreeGrammar.length === 0}>
+                    {copiedType === 'cfg' ? <Check size={16} /> : <Copy size={16} />}
+                    <span>{copiedType === 'cfg' ? 'Copied' : 'Copy Grammar'}</span>
+                  </button>
                 </div>
-                <p>No diagram generated yet.</p>
-                <span>Enter your configuration and description on the left to begin.</span>
+                {loading ? (
+                  <div className="text-loading">Loading grammar rules…</div>
+                ) : contextFreeGrammar.length > 0 ? (
+                  <ol className="cfg-list">
+                    {contextFreeGrammar.map((rule, index) => (
+                      <li key={index}>
+                        <code>{rule}</code>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <p className="text-output-empty">Context-free grammar is not available for this output.</p>
+                )}
               </div>
             )}
           </div>
