@@ -376,7 +376,7 @@ export default function DFA() {
                 ) : contextFreeGrammar.length > 0 ? (
                   <ol className="cfg-list">
                     {contextFreeGrammar.map((rule, index) => (
-                      <li key={`${rule}-${index}`}>
+                      <li key={index}>
                         <code>{rule}</code>
                       </li>
                     ))}
@@ -385,7 +385,7 @@ export default function DFA() {
                   <p className="text-output-empty">Context-free grammar is not available for this output.</p>
                 )}
               </div>
-            ) }
+            )}
           </div>
           <div className="powered-by-gemini">
             powered by <img src={geminiIcon} alt="Gemini" /> gemini
