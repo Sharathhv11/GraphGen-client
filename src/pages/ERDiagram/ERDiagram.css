@@ -87,6 +87,12 @@
   margin-bottom: 1rem;
 }
 
+.er-output-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 /* ── Form Elements ── */
 .er-input-group {
   margin-bottom: 1.5rem;
@@ -277,6 +283,46 @@
   border-color: var(--text-secondary);
 }
 
+.er-sql-panel {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.er-sql-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.er-sql-panel-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.er-sql-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.er-sql-content {
+  margin: 0;
+  padding: 1rem;
+  max-height: 260px;
+  overflow: auto;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  background: #0b1220;
+  color: #e2e8f0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* ── Output / Viz Area ── */
 .er-viz-render-area {
   flex: 1;
@@ -400,6 +446,11 @@
   .er-output-pane {
     padding: 1.5rem;
   }
+
+  .er-output-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
 }
 
 @media (max-width: 900px) {
@@ -447,6 +498,16 @@
 
   .er-pane-header h2 {
     font-size: 1.3rem;
+  }
+
+  .er-sql-panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .er-sql-actions {
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   .er-btn-generate {
