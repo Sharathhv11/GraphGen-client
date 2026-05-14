@@ -1,6 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowUp, Download, Loader2, AlertCircle, Database, Key } from 'lucide-react';
+import {
+  ArrowUp,
+  Download,
+  Loader2,
+  AlertCircle,
+  Database,
+  Key,
+  Eye,
+  EyeOff,
+  Copy,
+  Check,
+} from 'lucide-react';
 import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
@@ -24,6 +35,23 @@ const EXAMPLE_PROMPTS = [
   "E-commerce platform with Users, Products, Orders, and Reviews",
 ];
 
+const getSqlStatements = (responsePayload) => {
+  const rawSql =
+    responsePayload?.sql ??
+    responsePayload?.sqlStatements ??
+    responsePayload?.createTableStatements;
+
+  if (Array.isArray(rawSql)) {
+    return rawSql.filter((statement) => typeof statement === 'string' && statement.trim());
+  }
+
+  if (typeof rawSql === 'string' && rawSql.trim()) {
+    return [rawSql.trim()];
+  }
+
+  return [];
+};
+
 export default function ERDiagram() {
   useTitle('ER Diagram Generator');
   const location = useLocation();
@@ -34,6 +62,10 @@ export default function ERDiagram() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [vizCode, setVizCode] = useState('');
+  const [sqlOutput, setSqlOutput] = useState([]);
+  const [showSqlPanel, setShowSqlPanel] = useState(false);
+  const [copiedSql, setCopiedSql] = useState(false);
+  const copyResetTimeoutRef = useRef(null);
 
   const { saveHistory } = useHistory('er-diagram');
   const { hasApiKey } = useApiKeyStatus();
@@ -42,10 +74,17 @@ export default function ERDiagram() {
   useEffect(() => {
     if (location.state?.fromHistory) {
       if (location.state.outputData?.vizCode) setVizCode(location.state.outputData.vizCode);
+      setSqlOutput(getSqlStatements(location.state.outputData));
       if (location.state.inputData?.prompt) setDescription(location.state.inputData.prompt);
       window.history.replaceState({}, '');
     }
   }, [location.state]);
+
+  useEffect(() => {
+    return () => {
+      if (copyResetTimeoutRef.current) clearTimeout(copyResetTimeoutRef.current);
+    };
+  }, []);
 
   const handleGenerate = async () => {
     if (!description.trim()) {
@@ -74,10 +113,14 @@ export default function ERDiagram() {
           rawCode = graphMatch[0];
         }
 
+        const sqlStatements = getSqlStatements(response.data.data);
         setVizCode(rawCode);
+        setSqlOutput(sqlStatements);
+        setShowSqlPanel(false);
+        setCopiedSql(false);
 
         // Save to history
-        saveHistory({ prompt: description }, { vizCode: rawCode });
+        saveHistory({ prompt: description }, { vizCode: rawCode, sql: sqlStatements });
       } else {
         setError('Failed to generate diagram. Invalid response format.');
       }
@@ -90,6 +133,34 @@ export default function ERDiagram() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const sqlContent = useMemo(() => sqlOutput.join('\n\n'), [sqlOutput]);
+
+  const handleCopySQL = async () => {
+    if (!sqlContent) return;
+    try {
+      await navigator.clipboard.writeText(sqlContent);
+      setCopiedSql(true);
+      if (copyResetTimeoutRef.current) clearTimeout(copyResetTimeoutRef.current);
+      copyResetTimeoutRef.current = setTimeout(() => setCopiedSql(false), 1500);
+    } catch (err) {
+      console.error('Failed to copy SQL:', err);
+      setError('Failed to copy SQL to clipboard.');
+    }
+  };
+
+  const handleDownloadSQL = () => {
+    if (!sqlContent) return;
+    const blob = new Blob([sqlContent], { type: 'text/sql;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'er-diagram.sql';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleKeyDown = (e) => {
@@ -228,12 +299,24 @@ export default function ERDiagram() {
         <div className="er-output-pane">
           <div className="er-pane-header er-output-header">
             <h2>Generated Diagram</h2>
-            {vizCode && (
-              <button className="er-btn-download" onClick={handleDownloadPNG} title="Download PNG">
-                <Download size={18} />
-                <span>Export PNG</span>
-              </button>
-            )}
+            <div className="er-output-actions">
+              {sqlOutput.length > 0 && (
+                <button
+                  className="er-btn-download"
+                  onClick={() => setShowSqlPanel((prev) => !prev)}
+                  title={showSqlPanel ? 'Hide SQL' : 'View SQL'}
+                >
+                  {showSqlPanel ? <EyeOff size={18} /> : <Eye size={18} />}
+                  <span>{showSqlPanel ? 'Hide SQL' : 'View SQL'}</span>
+                </button>
+              )}
+              {vizCode && (
+                <button className="er-btn-download" onClick={handleDownloadPNG} title="Download PNG">
+                  <Download size={18} />
+                  <span>Export PNG</span>
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="er-viz-render-area">
@@ -265,6 +348,24 @@ export default function ERDiagram() {
               </div>
             )}
           </div>
+          {showSqlPanel && sqlOutput.length > 0 && (
+            <div className="er-sql-panel">
+              <div className="er-sql-panel-header">
+                <h3>Generated SQL</h3>
+                <div className="er-sql-actions">
+                  <button className="er-btn-download" onClick={handleCopySQL} title="Copy SQL">
+                    {copiedSql ? <Check size={16} /> : <Copy size={16} />}
+                    <span>{copiedSql ? 'Copied' : 'Copy SQL'}</span>
+                  </button>
+                  <button className="er-btn-download" onClick={handleDownloadSQL} title="Download SQL">
+                    <Download size={16} />
+                    <span>Download SQL</span>
+                  </button>
+                </div>
+              </div>
+              <pre className="er-sql-content">{sqlContent}</pre>
+            </div>
+          )}
           <div className="powered-by-gemini">
             powered by <img src={geminiIcon} alt="Gemini" /> gemini
           </div>

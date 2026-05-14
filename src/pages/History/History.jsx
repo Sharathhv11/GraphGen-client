@@ -107,6 +107,12 @@ export default function HistoryPage() {
     const tags = [];
 
     if (outputData.vizCode) tags.push('Diagram');
+    if (
+      (Array.isArray(outputData.sql) && outputData.sql.some((statement) => typeof statement === 'string' && statement.trim())) ||
+      (typeof outputData.sql === 'string' && outputData.sql.trim())
+    ) {
+      tags.push('SQL');
+    }
     if (typeof outputData.regularExpression === 'string' && outputData.regularExpression.trim()) tags.push('Regex');
 
     const grammar = outputData.contextFreeGrammar;
