@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowUp,
@@ -35,6 +35,23 @@ const EXAMPLE_PROMPTS = [
   "E-commerce platform with Users, Products, Orders, and Reviews",
 ];
 
+const getSqlStatements = (responsePayload) => {
+  const rawSql =
+    responsePayload?.sql ??
+    responsePayload?.sqlStatements ??
+    responsePayload?.createTableStatements;
+
+  if (Array.isArray(rawSql)) {
+    return rawSql.filter((statement) => typeof statement === 'string' && statement.trim());
+  }
+
+  if (typeof rawSql === 'string' && rawSql.trim()) {
+    return [rawSql.trim()];
+  }
+
+  return [];
+};
+
 export default function ERDiagram() {
   useTitle('ER Diagram Generator');
   const location = useLocation();
@@ -48,26 +65,10 @@ export default function ERDiagram() {
   const [sqlOutput, setSqlOutput] = useState([]);
   const [showSqlPanel, setShowSqlPanel] = useState(false);
   const [copiedSql, setCopiedSql] = useState(false);
+  const copyResetTimeoutRef = useRef(null);
 
   const { saveHistory } = useHistory('er-diagram');
   const { hasApiKey } = useApiKeyStatus();
-
-  const getSqlStatements = (responsePayload) => {
-    const rawSql =
-      responsePayload?.sql ??
-      responsePayload?.sqlStatements ??
-      responsePayload?.createTableStatements;
-
-    if (Array.isArray(rawSql)) {
-      return rawSql.filter((statement) => typeof statement === 'string' && statement.trim());
-    }
-
-    if (typeof rawSql === 'string' && rawSql.trim()) {
-      return [rawSql.trim()];
-    }
-
-    return [];
-  };
 
   /* ── Restore from History page navigation ── */
   useEffect(() => {
@@ -78,6 +79,12 @@ export default function ERDiagram() {
       window.history.replaceState({}, '');
     }
   }, [location.state]);
+
+  useEffect(() => {
+    return () => {
+      if (copyResetTimeoutRef.current) clearTimeout(copyResetTimeoutRef.current);
+    };
+  }, []);
 
   const handleGenerate = async () => {
     if (!description.trim()) {
@@ -128,14 +135,15 @@ export default function ERDiagram() {
     }
   };
 
-  const sqlContent = sqlOutput.join('\n\n');
+  const sqlContent = useMemo(() => sqlOutput.join('\n\n'), [sqlOutput]);
 
   const handleCopySQL = async () => {
     if (!sqlContent) return;
     try {
       await navigator.clipboard.writeText(sqlContent);
       setCopiedSql(true);
-      setTimeout(() => setCopiedSql(false), 1500);
+      if (copyResetTimeoutRef.current) clearTimeout(copyResetTimeoutRef.current);
+      copyResetTimeoutRef.current = setTimeout(() => setCopiedSql(false), 1500);
     } catch (err) {
       console.error('Failed to copy SQL:', err);
       setError('Failed to copy SQL to clipboard.');
