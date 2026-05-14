@@ -7,8 +7,6 @@ import {
   AlertCircle,
   Database,
   Key,
-  Eye,
-  EyeOff,
   Copy,
   Check,
 } from 'lucide-react';
@@ -16,7 +14,9 @@ import useTitle from '../../utils/useTitle';
 import api from '../../utils/api';
 import useHistory from '../../utils/useHistory';
 import useApiKeyStatus from '../../utils/useApiKeyStatus';
+import { copyToClipboard } from '../../utils/clipboard';
 import { Graphviz } from 'graphviz-react';
+import Editor from '@monaco-editor/react';
 import geminiIcon from '../../assets/gemini-icon.png';
 import './ERDiagram.css';
 
@@ -37,6 +37,7 @@ const EXAMPLE_PROMPTS = [
 
 const getSqlStatements = (responsePayload) => {
   const rawSql =
+    responsePayload?.sqlQueries ??
     responsePayload?.sql ??
     responsePayload?.sqlStatements ??
     responsePayload?.createTableStatements;
@@ -63,7 +64,7 @@ export default function ERDiagram() {
   const [error, setError] = useState(null);
   const [vizCode, setVizCode] = useState('');
   const [sqlOutput, setSqlOutput] = useState([]);
-  const [showSqlPanel, setShowSqlPanel] = useState(false);
+  const [activeTab, setActiveTab] = useState('diagram');
   const [copiedSql, setCopiedSql] = useState(false);
   const copyResetTimeoutRef = useRef(null);
 
@@ -76,6 +77,7 @@ export default function ERDiagram() {
       if (location.state.outputData?.vizCode) setVizCode(location.state.outputData.vizCode);
       setSqlOutput(getSqlStatements(location.state.outputData));
       if (location.state.inputData?.prompt) setDescription(location.state.inputData.prompt);
+      setActiveTab('diagram');
       window.history.replaceState({}, '');
     }
   }, [location.state]);
@@ -116,11 +118,11 @@ export default function ERDiagram() {
         const sqlStatements = getSqlStatements(response.data.data);
         setVizCode(rawCode);
         setSqlOutput(sqlStatements);
-        setShowSqlPanel(false);
+        setActiveTab('diagram');
         setCopiedSql(false);
 
         // Save to history
-        saveHistory({ prompt: description }, { vizCode: rawCode, sql: sqlStatements });
+        saveHistory({ prompt: description }, { vizCode: rawCode, sqlQueries: sqlStatements });
       } else {
         setError('Failed to generate diagram. Invalid response format.');
       }
@@ -139,14 +141,13 @@ export default function ERDiagram() {
 
   const handleCopySQL = async () => {
     if (!sqlContent) return;
-    try {
-      await navigator.clipboard.writeText(sqlContent);
+    const result = await copyToClipboard(sqlContent);
+    if (result.success) {
       setCopiedSql(true);
       if (copyResetTimeoutRef.current) clearTimeout(copyResetTimeoutRef.current);
       copyResetTimeoutRef.current = setTimeout(() => setCopiedSql(false), 1500);
-    } catch (err) {
-      console.error('Failed to copy SQL:', err);
-      setError('Failed to copy SQL to clipboard.');
+    } else {
+      setError(result.error || 'Failed to copy SQL to clipboard.');
     }
   };
 
@@ -298,74 +299,112 @@ export default function ERDiagram() {
         {/* Right Pane - Output */}
         <div className="er-output-pane">
           <div className="er-pane-header er-output-header">
-            <h2>Generated Diagram</h2>
+            <h2>Generated Output</h2>
             <div className="er-output-actions">
-              {sqlOutput.length > 0 && (
-                <button
-                  className="er-btn-download"
-                  onClick={() => setShowSqlPanel((prev) => !prev)}
-                  title={showSqlPanel ? 'Hide SQL' : 'View SQL'}
-                >
-                  {showSqlPanel ? <EyeOff size={18} /> : <Eye size={18} />}
-                  <span>{showSqlPanel ? 'Hide SQL' : 'View SQL'}</span>
-                </button>
-              )}
-              {vizCode && (
+              {activeTab === 'diagram' && vizCode && (
                 <button className="er-btn-download" onClick={handleDownloadPNG} title="Download PNG">
                   <Download size={18} />
                   <span>Export PNG</span>
                 </button>
               )}
-            </div>
-          </div>
-
-          <div className="er-viz-render-area">
-            {loading ? (
-              <div className="er-loading-state">
-                <Loader2 className="er-spinner-large" />
-                <p>Analyzing system description & building ER model...</p>
-                <span className="er-loading-subtext">
-                  The AI is identifying entities, attributes, and relationships. This may take a
-                  moment.
-                </span>
-              </div>
-            ) : vizCode ? (
-              <div className="er-viz-container">
-                <Graphviz
-                  dot={vizCode}
-                  options={{ zoom: true, height: '100%', width: '100%', fit: true }}
-                />
-              </div>
-            ) : (
-              <div className="er-empty-state">
-                <div className="er-empty-icon">
-                  <Database size={48} strokeWidth={1} />
-                </div>
-                <p>No diagram generated yet.</p>
-                <span>
-                  Describe a database system on the left and press <strong>Enter</strong> or click the arrow to generate.
-                </span>
-              </div>
-            )}
-          </div>
-          {showSqlPanel && sqlOutput.length > 0 && (
-            <div className="er-sql-panel">
-              <div className="er-sql-panel-header">
-                <h3>Generated SQL</h3>
-                <div className="er-sql-actions">
+              {activeTab === 'sql' && sqlOutput.length > 0 && (
+                <>
                   <button className="er-btn-download" onClick={handleCopySQL} title="Copy SQL">
                     {copiedSql ? <Check size={16} /> : <Copy size={16} />}
                     <span>{copiedSql ? 'Copied' : 'Copy SQL'}</span>
                   </button>
                   <button className="er-btn-download" onClick={handleDownloadSQL} title="Download SQL">
                     <Download size={16} />
-                    <span>Download SQL</span>
+                    <span>Download .sql</span>
                   </button>
-                </div>
-              </div>
-              <pre className="er-sql-content">{sqlContent}</pre>
+                </>
+              )}
             </div>
-          )}
+          </div>
+
+          {/* Output Tabs */}
+          <div className="er-output-tabs">
+            <button
+              className={`er-output-tab ${activeTab === 'diagram' ? 'active' : ''}`}
+              onClick={() => setActiveTab('diagram')}
+            >
+              Diagram
+            </button>
+            <button
+              className={`er-output-tab ${activeTab === 'sql' ? 'active' : ''}`}
+              onClick={() => setActiveTab('sql')}
+            >
+              SQL Statements
+            </button>
+          </div>
+
+          <div className={`er-viz-render-area ${activeTab !== 'diagram' ? 'er-text-mode' : ''}`}>
+            {activeTab === 'diagram' ? (
+              loading ? (
+                <div className="er-loading-state">
+                  <Loader2 className="er-spinner-large" />
+                  <p>Analyzing system description & building ER model...</p>
+                  <span className="er-loading-subtext">
+                    The AI is identifying entities, attributes, and relationships. This may take a
+                    moment.
+                  </span>
+                </div>
+              ) : vizCode ? (
+                <div className="er-viz-container">
+                  <Graphviz
+                    dot={vizCode}
+                    options={{ zoom: true, height: '100%', width: '100%', fit: true }}
+                  />
+                </div>
+              ) : (
+                <div className="er-empty-state">
+                  <div className="er-empty-icon">
+                    <Database size={48} strokeWidth={1} />
+                  </div>
+                  <p>No diagram generated yet.</p>
+                  <span>
+                    Describe a database system on the left and press <strong>Enter</strong> or click the arrow to generate.
+                  </span>
+                </div>
+              )
+            ) : (
+              /* SQL Tab */
+              <div className="er-text-output-block">
+                <div className="er-text-output-header">
+                  <h3>CREATE TABLE Statements</h3>
+                </div>
+                {loading ? (
+                  <div className="er-text-loading">Loading SQL statements…</div>
+                ) : sqlOutput.length > 0 ? (
+                  <>
+                    <p className="er-text-output-description">
+                      Executable SQL statements for every table in the ER diagram:
+                    </p>
+                    <div className="er-monaco-editor-wrapper">
+                      <Editor
+                        height="100%"
+                        defaultLanguage="sql"
+                        theme="vs-dark"
+                        value={sqlContent}
+                        options={{
+                          readOnly: true,
+                          minimap: { enabled: false },
+                          scrollBeyondLastLine: false,
+                          wordWrap: 'on',
+                          padding: { top: 16, bottom: 16 },
+                          fontSize: 14,
+                        }}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p className="er-text-output-empty">
+                    SQL statements are not available yet. Generate an ER diagram first.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
           <div className="powered-by-gemini">
             powered by <img src={geminiIcon} alt="Gemini" /> gemini
           </div>

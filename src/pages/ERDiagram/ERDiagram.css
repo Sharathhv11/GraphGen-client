@@ -283,44 +283,34 @@
   border-color: var(--text-secondary);
 }
 
-.er-sql-panel {
-  margin-top: 1rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--bg-secondary);
-  overflow: hidden;
-}
-
-.er-sql-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.er-sql-panel-header h3 {
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.er-sql-actions {
+/* ── Output Tabs (matches DFA pattern) ── */
+.er-output-tabs {
   display: flex;
   gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
-.er-sql-content {
-  margin: 0;
-  padding: 1rem;
-  max-height: 260px;
-  overflow: auto;
-  font-size: 0.85rem;
-  line-height: 1.5;
+.er-output-tab {
+  border: 1px solid var(--border);
   background: var(--bg-input);
+  color: var(--text-secondary);
+  border-radius: 999px;
+  padding: 0.38rem 0.8rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.er-output-tab:hover {
+  border-color: var(--text-secondary);
   color: var(--text-primary);
-  white-space: pre-wrap;
-  word-break: break-word;
+}
+
+.er-output-tab.active {
+  border-color: #2dd4bf;
+  color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.12);
 }
 
 /* ── Output / Viz Area ── */
@@ -338,6 +328,13 @@
   overflow: hidden;
   position: relative;
   min-height: 400px;
+}
+
+.er-viz-render-area.er-text-mode {
+  background: var(--bg-secondary);
+  background-image: none;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 .er-viz-container {
@@ -364,6 +361,53 @@
   max-height: 100%;
   width: auto !important;
   height: auto !important;
+}
+
+/* ── Text Output Block (SQL tab) ── */
+.er-text-output-block {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  color: var(--text-primary);
+}
+
+.er-text-output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.er-text-output-header h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.er-text-output-description {
+  margin: 0 0 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.er-monaco-editor-wrapper {
+  flex: 1;
+  min-height: 400px;
+  margin-top: 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: #1e1e1e; /* matches vs-dark theme */
+}
+
+.er-text-loading,
+.er-text-output-empty {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
 /* ── Empty & Loading States ── */
@@ -500,14 +544,13 @@
     font-size: 1.3rem;
   }
 
-  .er-sql-panel-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .er-output-tabs {
+    gap: 0.4rem;
   }
 
-  .er-sql-actions {
-    width: 100%;
-    flex-wrap: wrap;
+  .er-output-tab {
+    font-size: 0.74rem;
+    padding: 0.33rem 0.65rem;
   }
 
   .er-btn-generate {
