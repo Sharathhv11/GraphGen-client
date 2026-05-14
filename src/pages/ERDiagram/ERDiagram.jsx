@@ -52,22 +52,6 @@ export default function ERDiagram() {
   const { saveHistory } = useHistory('er-diagram');
   const { hasApiKey } = useApiKeyStatus();
 
-  /* ── Restore from History page navigation ── */
-  useEffect(() => {
-    if (location.state?.fromHistory) {
-      if (location.state.outputData?.vizCode) setVizCode(location.state.outputData.vizCode);
-      if (Array.isArray(location.state.outputData?.sql)) {
-        setSqlOutput(location.state.outputData.sql.filter((statement) => typeof statement === 'string' && statement.trim()));
-      } else if (typeof location.state.outputData?.sql === 'string' && location.state.outputData.sql.trim()) {
-        setSqlOutput([location.state.outputData.sql.trim()]);
-      } else {
-        setSqlOutput([]);
-      }
-      if (location.state.inputData?.prompt) setDescription(location.state.inputData.prompt);
-      window.history.replaceState({}, '');
-    }
-  }, [location.state]);
-
   const getSqlStatements = (responsePayload) => {
     const rawSql =
       responsePayload?.sql ??
@@ -84,6 +68,16 @@ export default function ERDiagram() {
 
     return [];
   };
+
+  /* ── Restore from History page navigation ── */
+  useEffect(() => {
+    if (location.state?.fromHistory) {
+      if (location.state.outputData?.vizCode) setVizCode(location.state.outputData.vizCode);
+      setSqlOutput(getSqlStatements(location.state.outputData));
+      if (location.state.inputData?.prompt) setDescription(location.state.inputData.prompt);
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
 
   const handleGenerate = async () => {
     if (!description.trim()) {
@@ -144,7 +138,7 @@ export default function ERDiagram() {
       setTimeout(() => setCopiedSql(false), 1500);
     } catch (err) {
       console.error('Failed to copy SQL:', err);
-      setError('Unable to copy SQL. Please copy it manually.');
+      setError('Failed to copy SQL to clipboard. Please select and copy the SQL manually from the panel below.');
     }
   };
 
