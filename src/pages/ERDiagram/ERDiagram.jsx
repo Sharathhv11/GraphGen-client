@@ -138,7 +138,7 @@ export default function ERDiagram() {
       setTimeout(() => setCopiedSql(false), 1500);
     } catch (err) {
       console.error('Failed to copy SQL:', err);
-      setError('Failed to copy SQL to clipboard. Please select and copy the SQL manually from the panel below.');
+      setError('Failed to copy SQL to clipboard. Please select and copy the SQL manually from the SQL panel.');
     }
   };
 
